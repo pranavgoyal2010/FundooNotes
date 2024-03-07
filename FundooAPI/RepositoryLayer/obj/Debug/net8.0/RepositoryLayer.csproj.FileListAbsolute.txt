@@ -22,3 +22,7 @@ C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\RepositoryLayer\obj\Debug\
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\RepositoryLayer\obj\Debug\net8.0\refint\RepositoryLayer.dll
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\RepositoryLayer\obj\Debug\net8.0\RepositoryLayer.pdb
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\RepositoryLayer\obj\Debug\net8.0\ref\RepositoryLayer.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\RepositoryLayer\bin\Debug\net8.0\ModelLayer.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\RepositoryLayer\bin\Debug\net8.0\ModelLayer.pdb
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\RepositoryLayer\obj\Debug\net8.0\RepositoryLayer.sourcelink.json
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\RepositoryLayer\obj\Debug\net8.0\Reposito.A0A61804.Up2Date

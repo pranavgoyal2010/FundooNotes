@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "ContainingType": "FundooNotes.Controllers.FundooController",
+    "Method": "RegisterUser",
+    "RelativePath": "api/fundoo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userRegistrationDto",
+        "Type": "ModelLayer.Dto.UserRegistrationDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

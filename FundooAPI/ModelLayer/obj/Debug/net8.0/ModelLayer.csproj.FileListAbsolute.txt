@@ -1,0 +1,13 @@
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\bin\Debug\net8.0\ModelLayer.deps.json
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\bin\Debug\net8.0\ModelLayer.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\bin\Debug\net8.0\ModelLayer.pdb
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\obj\Debug\net8.0\ModelLayer.csproj.AssemblyReference.cache
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\obj\Debug\net8.0\ModelLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\obj\Debug\net8.0\ModelLayer.AssemblyInfoInputs.cache
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\obj\Debug\net8.0\ModelLayer.AssemblyInfo.cs
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\obj\Debug\net8.0\ModelLayer.csproj.CoreCompileInputs.cache
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\obj\Debug\net8.0\ModelLayer.sourcelink.json
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\obj\Debug\net8.0\ModelLayer.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\obj\Debug\net8.0\refint\ModelLayer.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\obj\Debug\net8.0\ModelLayer.pdb
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\ModelLayer\obj\Debug\net8.0\ref\ModelLayer.dll
