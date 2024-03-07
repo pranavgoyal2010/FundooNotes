@@ -46,9 +46,24 @@ public class UserRL : IUserRL
                         Password VARCHAR(45) NOT NULL                             
                     );");
             }
-            await connection.QuerySingleAsync(query, parameters);
+            return await connection.QuerySingleAsync<bool>(query, parameters);
         }
-        return true;
+        //return true;
 
+    }
+
+    public async Task<bool> LoginUser(UserLoginDto userLoginDto)
+    {
+        var query = "SELECT COUNT(*) FROM Users WHERE Email = @email AND Password = @password";
+
+        var parameters = new DynamicParameters();
+
+        parameters.Add("email", userLoginDto.Email, DbType.String);
+        parameters.Add("password", userLoginDto.Password, DbType.String);
+
+        using (var connection = _appDbContext.CreateConnection())
+        {
+            return await connection.QueryFirstOrDefaultAsync<bool>(query, parameters);
+        }
     }
 }

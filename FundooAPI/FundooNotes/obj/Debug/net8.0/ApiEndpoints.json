@@ -1,8 +1,24 @@
 [
   {
     "ContainingType": "FundooNotes.Controllers.FundooController",
+    "Method": "LoginUser",
+    "RelativePath": "api/fundoo/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userLoginDto",
+        "Type": "ModelLayer.Dto.UserLoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FundooNotes.Controllers.FundooController",
     "Method": "RegisterUser",
-    "RelativePath": "api/fundoo",
+    "RelativePath": "api/fundoo/register",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,

@@ -14,13 +14,35 @@ namespace FundooNotes.Controllers
             _userBL = userBL;
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(UserRegistrationDto userRegistrationDto)
         {
             try
             {
                 var result = await _userBL.RegisterUser(userRegistrationDto);
-                return Ok(result);
+                return Ok("Registration successful");
+            }
+            catch (Exception ex)
+            {
+                //log error
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser(UserLoginDto userLoginDto)
+        {
+            try
+            {
+                var result = await _userBL.LoginUser(userLoginDto);
+                if (result)
+                {
+                    return Ok("Login successful");
+                }
+                else
+                {
+                    return Unauthorized("Invalid email or password");
+                }
             }
             catch (Exception ex)
             {
