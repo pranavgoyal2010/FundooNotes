@@ -143,3 +143,4 @@ C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\BusinessLayer.pdb
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\ModelLayer.pdb
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\obj\Debug\net8.0\FundooNotes.sourcelink.json
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\BCrypt.Net.dll

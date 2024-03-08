@@ -24,10 +24,12 @@ public class UserRL : IUserRL
 
         var parameters = new DynamicParameters();
 
+        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(userRegistrationDto.Password);
+
         parameters.Add("fName", userRegistrationDto.FirstName, DbType.String);
         parameters.Add("lName", userRegistrationDto.LastName, DbType.String);
         parameters.Add("email", userRegistrationDto.Email, DbType.String);
-        parameters.Add("password", userRegistrationDto.Password, DbType.String);
+        parameters.Add("password", hashedPassword, DbType.String);
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -40,12 +42,20 @@ public class UserRL : IUserRL
                 await connection.ExecuteAsync(@"
                     CREATE TABLE Users (      
                         UserId INT PRIMARY KEY IDENTITY(1,1),     
-                        FirstName VARCHAR(45) NOT NULL,  
-                        LastName VARCHAR(45) NOT NULL,      
-                        Email VARCHAR(45) NOT NULL,  
-                        Password VARCHAR(45) NOT NULL                             
+                        FirstName VARCHAR(100) NOT NULL,  
+                        LastName VARCHAR(100) NOT NULL,      
+                        Email VARCHAR(100) UNIQUE NOT NULL,  
+                        Password VARCHAR(100) NOT NULL                             
                     );");
             }
+
+            int exists = await connection.QueryFirstOrDefaultAsync<int>
+             ("SELECT COUNT(*) FROM Users WHERE Email = @email", parameters);
+
+
+            if (exists > 0)
+                return false;
+
             return await connection.QuerySingleAsync<bool>(query, parameters);
         }
         //return true;
@@ -54,16 +64,27 @@ public class UserRL : IUserRL
 
     public async Task<bool> LoginUser(UserLoginDto userLoginDto)
     {
-        var query = "SELECT COUNT(*) FROM Users WHERE Email = @email AND Password = @password";
+        var query = "SELECT Email, Password FROM Users WHERE Email = @email";
 
         var parameters = new DynamicParameters();
 
+        //string hashedPassword = BCrypt.Net.BCrypt.HashPassword(userLoginDto.Password);
+
         parameters.Add("email", userLoginDto.Email, DbType.String);
-        parameters.Add("password", userLoginDto.Password, DbType.String);
+        //parameters.Add("password", hashedword, DbType.String);
 
         using (var connection = _appDbContext.CreateConnection())
         {
-            return await connection.QueryFirstOrDefaultAsync<bool>(query, parameters);
+            var user = await connection.QueryFirstOrDefaultAsync<UserLoginDto>(query, parameters);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            string hashedPassword = user.Password;
+
+            return BCrypt.Net.BCrypt.Verify(userLoginDto.Password, hashedPassword);
         }
     }
 }

@@ -20,7 +20,10 @@ namespace FundooNotes.Controllers
             try
             {
                 var result = await _userBL.RegisterUser(userRegistrationDto);
-                return Ok("Registration successful");
+                if (result)
+                    return Ok("Registration successful");
+                else
+                    return BadRequest("Invalid email or password");
             }
             catch (Exception ex)
             {
