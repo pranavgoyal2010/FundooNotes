@@ -3,6 +3,7 @@ using ModelLayer.Dto;
 using RepositoryLayer.Context;
 using RepositoryLayer.Interface;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace RepositoryLayer.Service;
 
@@ -21,6 +22,8 @@ public class UserRL : IUserRL
             "(@fName, @lName, @email, @password);" +
             "SELECT CAST(SCOPE_IDENTITY() as int);";
 
+        if (!isValidEmail(userRegistrationDto.Email))
+            return false;
 
         var parameters = new DynamicParameters();
 
@@ -58,7 +61,6 @@ public class UserRL : IUserRL
 
             return await connection.QuerySingleAsync<bool>(query, parameters);
         }
-        //return true;
 
     }
 
@@ -70,6 +72,9 @@ public class UserRL : IUserRL
 
         //string hashedPassword = BCrypt.Net.BCrypt.HashPassword(userLoginDto.Password);
 
+        if (!isValidEmail(userLoginDto.Email))
+            return false;
+
         parameters.Add("email", userLoginDto.Email, DbType.String);
         //parameters.Add("password", hashedword, DbType.String);
 
@@ -78,13 +83,17 @@ public class UserRL : IUserRL
             var user = await connection.QueryFirstOrDefaultAsync<UserLoginDto>(query, parameters);
 
             if (user == null)
-            {
                 return false;
-            }
 
             string hashedPassword = user.Password;
 
             return BCrypt.Net.BCrypt.Verify(userLoginDto.Password, hashedPassword);
         }
+    }
+
+    public bool isValidEmail(string input)
+    {
+        string pattern = @"^[a-zA-Z]([\w]*|\.[\w]+)*\@[a-zA-Z0-9]+\.[a-z]{2,}$";
+        return Regex.IsMatch(input, pattern);
     }
 }
