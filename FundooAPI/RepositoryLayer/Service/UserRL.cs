@@ -79,7 +79,7 @@ public class UserRL : IUserRL
             var user = await connection.QueryFirstOrDefaultAsync<UserLoginDto>(query, parameters);
 
             if (user == null)
-                throw new InvalidCredentialsException("Invalid email or password");
+                throw new InvalidCredentialsException("Invalid email");
 
             string hashedPassword = user.Password;
 
@@ -88,7 +88,7 @@ public class UserRL : IUserRL
             if (result)
                 return true;
             else
-                throw new InvalidCredentialsException("Invalid email or password");
+                throw new InvalidCredentialsException("Invalid password");
         }
     }
 
