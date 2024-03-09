@@ -3,7 +3,6 @@ using ModelLayer.Dto;
 using RepositoryLayer.Context;
 using RepositoryLayer.Interface;
 using System.Data;
-using System.Text.RegularExpressions;
 
 namespace RepositoryLayer.Service;
 
@@ -21,9 +20,6 @@ public class UserRL : IUserRL
         var query = "INSERT INTO Users (FirstName, LastName, Email, Password) VALUES" +
             "(@fName, @lName, @email, @password);" +
             "SELECT CAST(SCOPE_IDENTITY() as int);";
-
-        if (!isValidEmail(userRegistrationDto.Email))
-            return false;
 
         var parameters = new DynamicParameters();
 
@@ -52,11 +48,9 @@ public class UserRL : IUserRL
                     );");
             }
 
-            int exists = await connection.QueryFirstOrDefaultAsync<int>
+            int userExists = await connection.QueryFirstOrDefaultAsync<int>
              ("SELECT COUNT(*) FROM Users WHERE Email = @email", parameters);
-
-
-            if (exists > 0)
+            if (userExists > 0)
                 return false;
 
             return await connection.QuerySingleAsync<bool>(query, parameters);
@@ -70,10 +64,7 @@ public class UserRL : IUserRL
 
         var parameters = new DynamicParameters();
 
-        //string hashedPassword = BCrypt.Net.BCrypt.HashPassword(userLoginDto.Password);
-
-        if (!isValidEmail(userLoginDto.Email))
-            return false;
+        //string hashedPassword = BCrypt.Net.BCrypt.HashPassword(userLoginDto.Password);        
 
         parameters.Add("email", userLoginDto.Email, DbType.String);
         //parameters.Add("password", hashedword, DbType.String);
@@ -91,9 +82,4 @@ public class UserRL : IUserRL
         }
     }
 
-    public bool isValidEmail(string input)
-    {
-        string pattern = @"^[a-zA-Z]([\w]*|\.[\w]+)*\@[a-zA-Z0-9]+\.[a-z]{2,}$";
-        return Regex.IsMatch(input, pattern);
-    }
 }

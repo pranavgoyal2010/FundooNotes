@@ -1,6 +1,8 @@
 ﻿using BusinessLayer.Interface;
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer.Dto;
+using ModelLayer.Response;
+using System.Text.RegularExpressions;
 
 namespace FundooNotes.Controllers
 {
@@ -19,15 +21,44 @@ namespace FundooNotes.Controllers
         {
             try
             {
+                //if (!isValidEmail(userRegistrationDto.Email))
+                //return BadRequest("Invalid email");
+                //if (!Regex.IsMatch(@"^[a-zA-Z]([\w]*|\.[\w]+)*\@[a-zA-Z0-9]+\.[a-z]{2,3}$", userRegistrationDto.Email))
+                //if (!Regex.IsMatch(@"^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}$", userRegistrationDto.Email))
+                if (!Regex.IsMatch(userRegistrationDto.Email, @"^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}$"))
+                {
+                    var response = new FundooResponseModel<UserRegistrationDto>
+                    {
+                        Message = "Invalid email"
+                    };
+                    return BadRequest(response);
+                }
+
                 var result = await _userBL.RegisterUser(userRegistrationDto);
                 if (result)
-                    return Ok("Registration successful");
+                {
+                    var response = new FundooResponseModel<UserRegistrationDto>
+                    {
+                        Message = "Registration successful"
+                    };
+                    return Ok(response);
+                }
+
                 else
-                    return BadRequest("Invalid email or password");
+                {
+                    var response = new FundooResponseModel<UserRegistrationDto>
+                    {
+                        Message = "User already exists"
+                    };
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
-                //log error
+                /*var response = new FundooResponseModel<UserRegistrationDto>
+                {
+                    Message = ex.Message
+                };*/
                 return StatusCode(500, ex.Message);
             }
         }
@@ -40,18 +71,26 @@ namespace FundooNotes.Controllers
                 var result = await _userBL.LoginUser(userLoginDto);
                 if (result)
                 {
-                    return Ok("Login successful");
+                    var response = new FundooResponseModel<UserLoginDto>
+                    {
+                        Message = "Login successful"
+                    };
+                    return Ok(response);
                 }
                 else
                 {
-                    return Unauthorized("Invalid email or password");
+                    return NotFound("Invalid email or password");
                 }
             }
             catch (Exception ex)
             {
-                //log error
+                /*var response = new FundooResponseModel<UserLoginDto>
+                {
+                    Message = ex.Message
+                };*/
                 return StatusCode(500, ex.Message);
             }
         }
+
     }
 }
