@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer.Dto;
 using ModelLayer.Response;
+using RepositoryLayer.CustomException;
 using System.Text.RegularExpressions;
 
 namespace FundooNotes.Controllers
@@ -27,11 +28,12 @@ namespace FundooNotes.Controllers
                 //if (!Regex.IsMatch(@"^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}$", userRegistrationDto.Email))
                 if (!Regex.IsMatch(userRegistrationDto.Email, @"^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}$"))
                 {
-                    var response = new FundooResponseModel<UserRegistrationDto>
+                    /*var response = new FundooResponseModel<UserRegistrationDto>
                     {
                         Message = "Invalid email"
                     };
-                    return BadRequest(response);
+                    return BadRequest(response);*/
+                    throw new InvalidEmailFormatException("Invalid email format");
                 }
 
                 var result = await _userBL.RegisterUser(userRegistrationDto);
@@ -46,12 +48,21 @@ namespace FundooNotes.Controllers
 
                 else
                 {
-                    var response = new FundooResponseModel<UserRegistrationDto>
+                    /*var response = new FundooResponseModel<UserRegistrationDto>
                     {
                         Message = "User already exists"
                     };
-                    return BadRequest(response);
+                    return BadRequest(response);*/
+                    throw new UserExistsException("User already exists");
                 }
+            }
+            catch (InvalidEmailFormatException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (UserExistsException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -79,8 +90,12 @@ namespace FundooNotes.Controllers
                 }
                 else
                 {
-                    return NotFound("Invalid email or password");
+                    throw new InvalidCredentialsException("Invalid email or password");
                 }
+            }
+            catch (InvalidCredentialsException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
