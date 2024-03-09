@@ -20,7 +20,7 @@ public class UserRL : IUserRL
     public async Task<bool> RegisterUser(UserRegistrationDto userRegistrationDto)
     {
         if (!isValidEmail(userRegistrationDto.Email))
-            throw new InvalidEmailFormatException("Invalid email format");
+            throw new InvalidCredentialsException("Invalid email format");
 
         var query = "INSERT INTO Users (FirstName, LastName, Email, Password) VALUES" +
             "(@fName, @lName, @email, @password);" +

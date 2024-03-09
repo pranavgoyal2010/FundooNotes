@@ -60,7 +60,7 @@ namespace FundooNotes.Controllers
                     throw new UserExistsException("User already exists");
                 }*/
             }
-            catch (InvalidEmailFormatException ex)
+            catch (InvalidCredentialsException ex)
             {
                 var response = new FundooResponseModel<UserRegistrationDto>
                 {
