@@ -1,8 +1,10 @@
 ﻿using Dapper;
 using ModelLayer.Dto;
 using RepositoryLayer.Context;
+using RepositoryLayer.CustomException;
 using RepositoryLayer.Interface;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace RepositoryLayer.Service;
 
@@ -17,6 +19,9 @@ public class UserRL : IUserRL
 
     public async Task<bool> RegisterUser(UserRegistrationDto userRegistrationDto)
     {
+        if (!isValidEmail(userRegistrationDto.Email))
+            throw new InvalidEmailFormatException("Invalid email format");
+
         var query = "INSERT INTO Users (FirstName, LastName, Email, Password) VALUES" +
             "(@fName, @lName, @email, @password);" +
             "SELECT CAST(SCOPE_IDENTITY() as int);";
@@ -51,7 +56,7 @@ public class UserRL : IUserRL
             int userExists = await connection.QueryFirstOrDefaultAsync<int>
              ("SELECT COUNT(*) FROM Users WHERE Email = @email", parameters);
             if (userExists > 0)
-                return false;
+                throw new UserExistsException("User already exists");
 
             return await connection.QuerySingleAsync<bool>(query, parameters);
         }
@@ -74,12 +79,22 @@ public class UserRL : IUserRL
             var user = await connection.QueryFirstOrDefaultAsync<UserLoginDto>(query, parameters);
 
             if (user == null)
-                return false;
+                throw new InvalidCredentialsException("Invalid email or password");
 
             string hashedPassword = user.Password;
 
-            return BCrypt.Net.BCrypt.Verify(userLoginDto.Password, hashedPassword);
+            bool result = BCrypt.Net.BCrypt.Verify(userLoginDto.Password, hashedPassword);
+
+            if (result)
+                return true;
+            else
+                throw new InvalidCredentialsException("Invalid email or password");
         }
     }
 
+    public bool isValidEmail(string input)
+    {
+        string pattern = @"^[a-zA-Z]([\w]*|\.[\w]+)*\@[a-zA-Z0-9]+\.[a-z]{2,}$";
+        return Regex.IsMatch(input, pattern);
+    }
 }

@@ -1,9 +1,18 @@
-﻿namespace ModelLayer.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ModelLayer.Dto;
 
 public class UserRegistrationDto
 {
-    public required string FirstName { get; set; }
-    public required string LastName { get; set; }
-    public required string Email { get; set; }
-    public required string Password { get; set; }
+    [Required(ErrorMessage = "First name required")]
+    public string FirstName { get; set; }
+
+    [Required(ErrorMessage = "Last name required")]
+    public string LastName { get; set; }
+
+    [Required(ErrorMessage = "Email required")]
+    public string Email { get; set; }
+
+    [Required(ErrorMessage = "Password required")]
+    public string Password { get; set; }
 }

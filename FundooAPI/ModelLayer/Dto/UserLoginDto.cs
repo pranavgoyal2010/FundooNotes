@@ -1,8 +1,13 @@
-﻿namespace ModelLayer.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ModelLayer.Dto;
 
 public class UserLoginDto
 {
-    public required string Email { get; set; }
-    public required string Password { get; set; }
+    [Required(ErrorMessage = "Email required")]
+    public string Email { get; set; }
+
+    [Required(ErrorMessage = "Password required")]
+    public string Password { get; set; }
 
 }
