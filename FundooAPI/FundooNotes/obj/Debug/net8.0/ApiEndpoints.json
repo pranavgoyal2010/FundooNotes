@@ -17,6 +17,22 @@
   },
   {
     "ContainingType": "FundooNotes.Controllers.FundooController",
+    "Method": "ProtectedEndpoint",
+    "RelativePath": "api/fundoo/protected",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "expectedUserId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FundooNotes.Controllers.FundooController",
     "Method": "RegisterUser",
     "RelativePath": "api/fundoo/register",
     "HttpMethod": "POST",

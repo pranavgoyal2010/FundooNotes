@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer.Dto;
 using ModelLayer.Response;
@@ -99,9 +100,12 @@ namespace FundooNotes.Controllers
                 var result = await _userBL.LoginUser(userLoginDto);
                 //if (result)
                 //{
+                string token = _userBL.authService().GenerateJwtToken(result);
+
                 var response = new FundooResponseModel<UserLoginDto>
                 {
-                    Message = "Login successful"
+                    Message = "Login successful",
+                    Token = token
                 };
                 return Ok(response);
                 //}
@@ -129,6 +133,14 @@ namespace FundooNotes.Controllers
                 };
                 return StatusCode(500, response);
             }
+        }
+
+        [Authorize]
+        [HttpGet("protected")]
+        public IActionResult ProtectedEndpoint()
+        {
+            // This endpoint can only be accessed with a valid JWT token and the correct user ID
+            return Ok("This is a protected endpoint");
         }
 
     }

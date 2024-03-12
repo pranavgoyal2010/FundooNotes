@@ -2,6 +2,7 @@
 using ModelLayer.Dto;
 using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
+using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using System.Data;
 using System.Text.RegularExpressions;
@@ -63,9 +64,9 @@ public class UserRL : IUserRL
 
     }
 
-    public async Task<bool> LoginUser(UserLoginDto userLoginDto)
+    public async Task<int> LoginUser(UserLoginDto userLoginDto)
     {
-        var query = "SELECT Email, Password FROM Users WHERE Email = @email";
+        var query = "SELECT UserId, Email, Password FROM Users WHERE Email = @email";
 
         var parameters = new DynamicParameters();
 
@@ -76,7 +77,7 @@ public class UserRL : IUserRL
 
         using (var connection = _appDbContext.CreateConnection())
         {
-            var user = await connection.QueryFirstOrDefaultAsync<UserLoginDto>(query, parameters);
+            var user = await connection.QueryFirstOrDefaultAsync<UserEntity>(query, parameters);
 
             if (user == null)
                 throw new InvalidCredentialsException("Invalid email");
@@ -86,7 +87,7 @@ public class UserRL : IUserRL
             bool result = BCrypt.Net.BCrypt.Verify(userLoginDto.Password, hashedPassword);
 
             if (result)
-                return true;
+                return user.UserId;
             else
                 throw new InvalidCredentialsException("Invalid password");
         }
