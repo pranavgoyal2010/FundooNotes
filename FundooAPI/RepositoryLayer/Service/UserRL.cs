@@ -2,7 +2,6 @@
 using ModelLayer.Dto;
 using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
-using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using System.Data;
 using System.Text.RegularExpressions;
@@ -12,20 +11,17 @@ namespace RepositoryLayer.Service;
 public class UserRL : IUserRL
 {
     private readonly AppDbContext _appDbContext;
-
-    public UserRL(AppDbContext appDbContext)
+    private readonly IAuthServiceRL _authServiceRL;
+    public UserRL(AppDbContext appDbContext, IAuthServiceRL authServiceRL)
     {
         _appDbContext = appDbContext;
+        _authServiceRL = authServiceRL;
     }
 
     public async Task<bool> RegisterUser(UserRegistrationDto userRegistrationDto)
     {
         if (!isValidEmail(userRegistrationDto.Email))
             throw new InvalidCredentialsException("Invalid email format");
-
-        var query = "INSERT INTO Users (FirstName, LastName, Email, Password) VALUES" +
-            "(@fName, @lName, @email, @password);" +
-            "SELECT CAST(SCOPE_IDENTITY() as int);";
 
         var parameters = new DynamicParameters();
 
@@ -35,6 +31,10 @@ public class UserRL : IUserRL
         parameters.Add("lName", userRegistrationDto.LastName, DbType.String);
         parameters.Add("email", userRegistrationDto.Email, DbType.String);
         parameters.Add("password", hashedPassword, DbType.String);
+
+        var query = "INSERT INTO Users (FirstName, LastName, Email, Password) VALUES" +
+            "(@fName, @lName, @email, @password);" +
+            "SELECT CAST(SCOPE_IDENTITY() as int);";
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -64,9 +64,9 @@ public class UserRL : IUserRL
 
     }
 
-    public async Task<int> LoginUser(UserLoginDto userLoginDto)
+    public async Task<string> LoginUser(UserLoginDto userLoginDto)
     {
-        var query = "SELECT UserId, Email, Password FROM Users WHERE Email = @email";
+        var query = "SELECT Email, Password FROM Users WHERE Email = @email";
 
         var parameters = new DynamicParameters();
 
@@ -77,7 +77,7 @@ public class UserRL : IUserRL
 
         using (var connection = _appDbContext.CreateConnection())
         {
-            var user = await connection.QueryFirstOrDefaultAsync<UserEntity>(query, parameters);
+            var user = await connection.QueryFirstOrDefaultAsync<UserLoginDto>(query, parameters);
 
             if (user == null)
                 throw new InvalidCredentialsException("Invalid email");
@@ -87,7 +87,7 @@ public class UserRL : IUserRL
             bool result = BCrypt.Net.BCrypt.Verify(userLoginDto.Password, hashedPassword);
 
             if (result)
-                return user.UserId;
+                return _authServiceRL.GenerateJwtToken(user);
             else
                 throw new InvalidCredentialsException("Invalid password");
         }

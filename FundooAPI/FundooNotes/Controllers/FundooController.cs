@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ModelLayer.Dto;
 using ModelLayer.Response;
 using RepositoryLayer.CustomException;
+using System.Security.Claims;
 
 namespace FundooNotes.Controllers
 {
@@ -12,6 +13,7 @@ namespace FundooNotes.Controllers
     public class FundooController : ControllerBase
     {
         private readonly IUserBL _userBL;
+
         public FundooController(IUserBL userBL)
         {
             _userBL = userBL;
@@ -22,44 +24,14 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                //if (!isValidEmail(userRegistrationDto.Email))
-                //return BadRequest("Invalid email");
-                //if (!Regex.IsMatch(@"^[a-zA-Z]([\w]*|\.[\w]+)*\@[a-zA-Z0-9]+\.[a-z]{2,3}$", userRegistrationDto.Email))
-                //if (!Regex.IsMatch(@"^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}$", userRegistrationDto.Email))
-                /*if (!Regex.IsMatch(userRegistrationDto.Email, @"^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}$"))
-                {
-                    /*var response = new FundooResponseModel<UserRegistrationDto>
-                    {
-                        Message = "Invalid email"
-                    };
-                    return BadRequest(response);
-                    throw new InvalidEmailFormatException("Invalid email format");
-                }*/
-
-                /*if (!ModelState.IsValid)
-                {
-                    throw new Exception("Cannot be empty.");
-                }*/
-
                 var result = await _userBL.RegisterUser(userRegistrationDto);
-                //if (result)
-                //{
+
                 var response = new FundooResponseModel<UserRegistrationDto>
                 {
                     Message = "Registration successful"
                 };
                 return Ok(response);
-                //}
 
-                /*else
-                {
-                    /*var response = new FundooResponseModel<UserRegistrationDto>
-                    {
-                        Message = "User already exists"
-                    };
-                    return BadRequest(response);
-                    throw new UserExistsException("User already exists");
-                }*/
             }
             catch (InvalidCredentialsException ex)
             {
@@ -98,21 +70,14 @@ namespace FundooNotes.Controllers
             try
             {
                 var result = await _userBL.LoginUser(userLoginDto);
-                //if (result)
-                //{
-                string token = _userBL.authService().GenerateJwtToken(result);
 
                 var response = new FundooResponseModel<UserLoginDto>
                 {
                     Message = "Login successful",
-                    Token = token
+                    Token = result
                 };
                 return Ok(response);
-                //}
-                /*else
-                {
-                    throw new InvalidCredentialsException("Invalid email or password");
-                }*/
+
             }
             catch (InvalidCredentialsException ex)
             {
@@ -137,10 +102,21 @@ namespace FundooNotes.Controllers
 
         [Authorize]
         [HttpGet("protected")]
-        public IActionResult ProtectedEndpoint()
+        public IActionResult ProtectedEndpoint(string email)
         {
-            // This endpoint can only be accessed with a valid JWT token and the correct user ID
-            return Ok("This is a protected endpoint");
+            //extracting email from token's payload
+            var emailClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            //if email does not exist return the following
+            if (emailClaim == null)
+                return Unauthorized("401 : user does not exist");
+
+            //if email does not match then return the following
+            if (!email.Equals(emailClaim))
+                return Unauthorized("403 : unauthorized user");
+            else
+                // This endpoint can only be accessed with a valid JWT token.
+                return Ok("Welcome to Fundoo notes");
         }
 
     }
