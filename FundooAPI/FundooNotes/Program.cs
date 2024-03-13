@@ -20,6 +20,8 @@ builder.Services.AddSingleton<AppDbContext>();
 builder.Services.AddScoped<IUserBL, UserBL>();
 builder.Services.AddScoped<IUserRL, UserRL>();
 builder.Services.AddScoped<IAuthServiceRL, AuthServiceRL>();
+builder.Services.AddScoped<INoteBL, NoteBL>();
+builder.Services.AddScoped<INoteRL, NoteRL>();
 
 // Configure JWT authentication
 
