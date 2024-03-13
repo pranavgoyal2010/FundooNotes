@@ -59,7 +59,7 @@ public class NoteRL : INoteRL
                 throw new ArgumentNullException("Values cannot be null");
             }
 
-            var selectQuery = "SELECT * FROM Notes WHERE UserId = @userId";
+            var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=False AND IsArchived=False";
 
             var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
             return allNotes.Reverse().ToList();
@@ -68,7 +68,7 @@ public class NoteRL : INoteRL
 
     public async Task<IEnumerable<GetNoteDto>> GetAllNotes(int userId)
     {
-        var query = "SELECT * FROM Notes WHERE UserId = @userId";
+        var query = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=False AND IsArchived=False";
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -114,7 +114,7 @@ public class NoteRL : INoteRL
             if (result == 0)
                 throw new UpdateFailException("Update failed please try again");
 
-            var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId";
+            var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=False AND IsArchived=False";
 
             //QueryAsync returns a collection of rows. It's useful when you expect multiple rows to be returned from the database.
             var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
