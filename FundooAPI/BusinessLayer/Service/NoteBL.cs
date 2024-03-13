@@ -17,4 +17,9 @@ public class NoteBL : INoteBL
     {
         return _noteRL.CreateNote(createNoteDto, userId);
     }
+
+    public Task<IEnumerable<GetNoteDto>> GetAllNotes(int userId)
+    {
+        return _noteRL.GetAllNotes(userId);
+    }
 }

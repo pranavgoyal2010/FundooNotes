@@ -53,5 +53,37 @@ namespace FundooNotes.Controllers
                 return StatusCode(401, response);
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllNotes()
+        {
+            try
+            {
+                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+
+                var notes = await _noteBL.GetAllNotes(userIdClaimedToInt);
+
+                var response = new FundooResponseModel<IEnumerable<GetNoteDto>>
+                {
+                    Success = true,
+                    Message = "Retrieved all notes successfully",
+                    Data = notes
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new FundooResponseModel<GetNoteDto>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Data = null
+                };
+                return StatusCode(500, response); //returning 500 error code as this error
+                                                  //can occur only due to server error
+            }
+        }
     }
 }

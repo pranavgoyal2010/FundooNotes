@@ -29,7 +29,6 @@ public class NoteRL : INoteRL
         var insertQuery = "INSERT INTO Notes ([Title], Description, Colour, IsArchived, IsDeleted, UserId) VALUES" +
             "(@title, @description, @colour, @isArchived, @isDeleted, @userId);" +
             "SELECT CAST(SCOPE_IDENTITY() as int);";
-        //"SELECT * FROM Notes WHERE UserId = @userId";
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -64,5 +63,24 @@ public class NoteRL : INoteRL
             var notes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
             return notes.Reverse().ToList();
         }
+    }
+
+    public async Task<IEnumerable<GetNoteDto>> GetAllNotes(int userId)
+    {
+        //var parameters = new DynamicParameters();
+        //parameters.Add("userId", userId, DbType.Int32);
+
+        var query = "SELECT * FROM Notes WHERE UserId = @userId";
+
+        using (var connection = _appDbContext.CreateConnection())
+        {
+            var allNotes = await connection.QueryAsync<GetNoteDto>(query, new { userId });
+
+            if (allNotes != null)
+                return allNotes.Reverse().ToList();
+            else
+                return Enumerable.Empty<GetNoteDto>();
+        }
+
     }
 }
