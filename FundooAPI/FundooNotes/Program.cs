@@ -125,7 +125,10 @@ if (app.Environment.IsDevelopment())
 // Enable HTTPS redirection
 app.UseHttpsRedirection();
 
-// Enable authentication and authorization
+// Enable authentication
+app.UseAuthentication();
+
+// Enable authorization
 app.UseAuthorization();
 
 // Map controllers to HTTP request endpoints

@@ -1,8 +1,8 @@
-﻿using ModelLayer.Dto;
+﻿using RepositoryLayer.Entity;
 
 namespace RepositoryLayer.Interface;
 
 public interface IAuthServiceRL
 {
-    public string GenerateJwtToken(UserLoginDto userLoginDto);
+    public string GenerateJwtToken(UserEntity userEntity);
 }

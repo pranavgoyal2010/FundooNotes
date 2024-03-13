@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using ModelLayer.Dto;
+using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,31 +10,24 @@ namespace RepositoryLayer.Service;
 
 public class AuthServiceRL : IAuthServiceRL
 {
-    //private readonly AppDbContext _appDbContext;
     private readonly IConfiguration _configuration;
     public AuthServiceRL(IConfiguration configuration)
     {
-        //_appDbContext = appDbContext;
         _configuration = configuration;
     }
 
-    public string GenerateJwtToken(UserLoginDto userLoginDto)
+    public string GenerateJwtToken(UserEntity userEntity)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
-
-        // Ensure the key size is at least 256 bits (32 bytes)
-        if (key.Length < 32)
-        {
-            throw new ArgumentException("JWT secret key must be at least 256 bits (32 bytes)");
-        }
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.NameIdentifier, userLoginDto.Email), // Include user ID as a claim
+                new Claim(ClaimTypes.NameIdentifier, userEntity.UserId.ToString()), // Include user ID as a claim
                                                                       // Add more claims if needed
+                new Claim(ClaimTypes.Email, userEntity.Email),
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
