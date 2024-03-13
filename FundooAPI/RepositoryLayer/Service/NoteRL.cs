@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using ModelLayer.Dto;
 using RepositoryLayer.Context;
+using RepositoryLayer.CustomException;
 using RepositoryLayer.Interface;
 using System.Data;
 
@@ -60,16 +61,13 @@ public class NoteRL : INoteRL
 
             var selectQuery = "SELECT * FROM Notes WHERE UserId = @userId";
 
-            var notes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
-            return notes.Reverse().ToList();
+            var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
+            return allNotes.Reverse().ToList();
         }
     }
 
     public async Task<IEnumerable<GetNoteDto>> GetAllNotes(int userId)
     {
-        //var parameters = new DynamicParameters();
-        //parameters.Add("userId", userId, DbType.Int32);
-
         var query = "SELECT * FROM Notes WHERE UserId = @userId";
 
         using (var connection = _appDbContext.CreateConnection())
@@ -82,5 +80,45 @@ public class NoteRL : INoteRL
                 return Enumerable.Empty<GetNoteDto>();
         }
 
+    }
+
+    public async Task<IEnumerable<GetNoteDto>> UpdateNote(UpdateNoteDto updateNoteDto, int userId)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("noteId", updateNoteDto.NoteId, DbType.Int32);
+        parameters.Add("title", updateNoteDto.Title, DbType.String);
+        parameters.Add("description", updateNoteDto.Description, DbType.String);
+        parameters.Add("colour", updateNoteDto.Colour, DbType.String);
+        parameters.Add("userId", userId, DbType.Int32);
+
+        var updateQuery = "UPDATE Notes " +
+                    "SET Title=@title, " +
+                    "Description=@description, " +
+                    "Colour=@colour WHERE UserId=@userId AND NoteId=@noteId";
+
+        using (var connection = _appDbContext.CreateConnection())
+        {
+            //possibility of zero or more rows getting updated due to QuerySingleOrDefaultAsync
+            //bool result = await connection.QuerySingleOrDefaultAsync<bool>(updateQuery, parameters);
+
+            //bool result = await connection.QuerySingleAsync<bool>(updateQuery, parameters);
+
+            //QuerySingleOrDefaultAsync<bool> method is typically
+            //used to retrieve a single boolean value from the database,
+            //not to execute update operations.
+            //To fix this, you should use ExecuteAsync instead of QuerySingleOrDefaultAsync<bool>
+
+
+            int result = await connection.ExecuteAsync(updateQuery, parameters);
+
+            if (result == 0)
+                throw new UpdateFailException("Update failed please try again");
+
+            var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId";
+
+            //QueryAsync returns a collection of rows. It's useful when you expect multiple rows to be returned from the database.
+            var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
+            return allNotes.Reverse().ToList();
+        }
     }
 }

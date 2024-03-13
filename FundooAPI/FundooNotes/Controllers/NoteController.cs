@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer.Dto;
 using ModelLayer.Response;
+using RepositoryLayer.CustomException;
 using System.Security.Claims;
 
 namespace FundooNotes.Controllers
@@ -26,17 +27,12 @@ namespace FundooNotes.Controllers
             {
                 var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                /*if (userIdClaimed == null)
-                {
-                    throw new ArgumentNullException("Invalid token");
-                }*/
-
                 int userIdClaimedInInt = Convert.ToInt32(userIdClaimed);
                 var notes = await _noteBL.CreateNote(createNoteDto, userIdClaimedInInt);
 
                 var response = new FundooResponseModel<IEnumerable<GetNoteDto>>
                 {
-                    Success = true,
+                    //Success = true,
                     Message = "note created successfully",
                     Data = notes
                 };
@@ -48,9 +44,9 @@ namespace FundooNotes.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Data = null
+                    //Data = null
                 };
-                return StatusCode(401, response);
+                return StatusCode(401, response); //401 error returned as the user is unauthorized
             }
         }
 
@@ -67,7 +63,7 @@ namespace FundooNotes.Controllers
 
                 var response = new FundooResponseModel<IEnumerable<GetNoteDto>>
                 {
-                    Success = true,
+                    //Success = true,
                     Message = "Retrieved all notes successfully",
                     Data = notes
                 };
@@ -79,10 +75,41 @@ namespace FundooNotes.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Data = null
+                    //Data = null
                 };
                 return StatusCode(500, response); //returning 500 error code as this error
                                                   //can occur only due to server error
+            }
+        }
+
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> UpdateNote(UpdateNoteDto updateNoteDto)
+        {
+            try
+            {
+                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+
+                var result = await _noteBL.UpdateNote(updateNoteDto, userIdClaimedToInt);
+
+                var response = new FundooResponseModel<IEnumerable<GetNoteDto>>
+                {
+                    //Success = true,
+                    Message = "Updated note successfully",
+                    Data = result
+                };
+                return Ok(response);
+            }
+            catch (UpdateFailException ex)
+            {
+                var response = new FundooResponseModel<GetNoteDto>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    //Data = null
+                };
+                return BadRequest(response); //status code of 400 is returned as there is client error
             }
         }
     }

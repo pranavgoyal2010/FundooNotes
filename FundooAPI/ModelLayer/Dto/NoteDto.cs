@@ -29,6 +29,9 @@ public class ArchieveNoteDto
 
 public class UpdateNoteDto
 {
+    [Required]
+    public int NoteId { get; set; }
+    [Required]
     public string Title { get; set; }
     public string? Description { get; set; }
     public string Colour { get; set; } = string.Empty;

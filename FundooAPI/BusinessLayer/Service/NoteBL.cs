@@ -22,4 +22,9 @@ public class NoteBL : INoteBL
     {
         return _noteRL.GetAllNotes(userId);
     }
+
+    public Task<IEnumerable<GetNoteDto>> UpdateNote(UpdateNoteDto updateNoteDto, int userId)
+    {
+        return _noteRL.UpdateNote(updateNoteDto, userId);
+    }
 }
