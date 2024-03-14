@@ -83,15 +83,15 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpPut]
-        public async Task<IActionResult> UpdateNote(UpdateNoteDto updateNoteDto)
+        [HttpPut("{noteId}")]
+        public async Task<IActionResult> UpdateNote(int noteId, [FromBody] UpdateNoteDto updateNoteDto)
         {
             try
             {
                 var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
 
-                var result = await _noteBL.UpdateNote(updateNoteDto, userIdClaimedToInt);
+                var result = await _noteBL.UpdateNote(updateNoteDto, userIdClaimedToInt, noteId);
 
                 var response = new FundooResponseModel<IEnumerable<GetNoteDto>>
                 {

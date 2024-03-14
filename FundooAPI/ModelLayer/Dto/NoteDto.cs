@@ -15,7 +15,7 @@ public class CreateNoteDto
 public class DeleteNoteDto
 {
     [Required]
-    public string Title { get; set; }
+    public int NoteId { get; set; }
     public bool IsDeleted { get; set; } = true;
 
 }
@@ -23,14 +23,14 @@ public class DeleteNoteDto
 public class ArchieveNoteDto
 {
     [Required]
-    public string Title { get; set; }
+    public int NoteId { get; set; }
     public bool IsArchived { get; set; } = true;
 }
 
 public class UpdateNoteDto
 {
-    [Required]
-    public int NoteId { get; set; }
+    //[Required]
+    //public int NoteId { get; set; }
     [Required]
     public string Title { get; set; }
     public string? Description { get; set; }

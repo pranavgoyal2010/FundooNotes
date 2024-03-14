@@ -23,8 +23,8 @@ public class NoteRL : INoteRL
         parameters.Add("title", createNoteDto.Title, DbType.String);
         parameters.Add("description", createNoteDto.Description, DbType.String);
         parameters.Add("colour", createNoteDto.Colour, DbType.String);
-        parameters.Add("isArchived", false, DbType.Boolean);
-        parameters.Add("isDeleted", false, DbType.Boolean);
+        parameters.Add("isArchived", 0, DbType.Boolean);
+        parameters.Add("isDeleted", 0, DbType.Boolean);
         parameters.Add("userId", userId, DbType.Int32);
 
         var insertQuery = "INSERT INTO Notes ([Title], Description, Colour, IsArchived, IsDeleted, UserId) VALUES" +
@@ -59,7 +59,7 @@ public class NoteRL : INoteRL
                 throw new ArgumentNullException("Values cannot be null");
             }
 
-            var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=False AND IsArchived=False";
+            var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
 
             var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
             return allNotes.Reverse().ToList();
@@ -68,7 +68,7 @@ public class NoteRL : INoteRL
 
     public async Task<IEnumerable<GetNoteDto>> GetAllNotes(int userId)
     {
-        var query = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=False AND IsArchived=False";
+        var query = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -82,10 +82,10 @@ public class NoteRL : INoteRL
 
     }
 
-    public async Task<IEnumerable<GetNoteDto>> UpdateNote(UpdateNoteDto updateNoteDto, int userId)
+    public async Task<IEnumerable<GetNoteDto>> UpdateNote(UpdateNoteDto updateNoteDto, int userId, int noteId)
     {
         var parameters = new DynamicParameters();
-        parameters.Add("noteId", updateNoteDto.NoteId, DbType.Int32);
+        parameters.Add("noteId", noteId, DbType.Int32);
         parameters.Add("title", updateNoteDto.Title, DbType.String);
         parameters.Add("description", updateNoteDto.Description, DbType.String);
         parameters.Add("colour", updateNoteDto.Colour, DbType.String);
@@ -114,7 +114,7 @@ public class NoteRL : INoteRL
             if (result == 0)
                 throw new UpdateFailException("Update failed please try again");
 
-            var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=False AND IsArchived=False";
+            var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
 
             //QueryAsync returns a collection of rows. It's useful when you expect multiple rows to be returned from the database.
             var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
