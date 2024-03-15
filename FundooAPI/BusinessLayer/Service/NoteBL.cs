@@ -13,7 +13,7 @@ public class NoteBL : INoteBL
         _noteRL = noteRL;
     }
 
-    public Task<IEnumerable<GetNoteDto>> CreateNote(CreateNoteDto createNoteDto, int userId)
+    public Task<GetNoteDto> CreateNote(CreateNoteDto createNoteDto, int userId)
     {
         return _noteRL.CreateNote(createNoteDto, userId);
     }
@@ -23,7 +23,7 @@ public class NoteBL : INoteBL
         return _noteRL.GetAllNotes(userId);
     }
 
-    public Task<IEnumerable<GetNoteDto>> UpdateNote(UpdateNoteDto updateNoteDto, int userId, int noteId)
+    public Task<GetNoteDto> UpdateNote(UpdateNoteDto updateNoteDto, int userId, int noteId)
     {
         return _noteRL.UpdateNote(updateNoteDto, userId, noteId);
     }

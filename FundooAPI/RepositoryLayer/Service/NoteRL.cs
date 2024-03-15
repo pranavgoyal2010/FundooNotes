@@ -16,7 +16,7 @@ public class NoteRL : INoteRL
         _appDbContext = appDbContext;
     }
 
-    public async Task<IEnumerable<GetNoteDto>> CreateNote(CreateNoteDto createNoteDto, int userId)
+    public async Task<GetNoteDto> CreateNote(CreateNoteDto createNoteDto, int userId)
     {
         var parameters = new DynamicParameters();
 
@@ -33,8 +33,10 @@ public class NoteRL : INoteRL
 
         using (var connection = _appDbContext.CreateConnection())
         {
+
+
             bool tableExists = await connection.QueryFirstOrDefaultAsync<bool>
-             ("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Notes'");
+                ("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Notes'");
 
             if (!tableExists)
             {
@@ -48,105 +50,94 @@ public class NoteRL : INoteRL
                         IsArchived BIT DEFAULT(0),
                         IsDeleted BIT DEFAULT(0),
                         UserId INT FOREIGN KEY REFERENCES Users(UserId)
-                    );");
+                 );");
             }
 
 
-            bool result = await connection.QuerySingleAsync<bool>(insertQuery, parameters);
+            //return await connection.QuerySingleAsync<GetNoteDto>(insertQuery, parameters);
 
-            if (!result)
+
+            var Id = await connection.ExecuteScalarAsync<int>(insertQuery, parameters);
+            return new GetNoteDto
             {
-                throw new NoteNotCreatedException("Error occured while creating note");
-            }
-
-            var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
-
-            var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
-            return allNotes.Reverse().ToList();
-
-            //return true;
+                NoteId = Id,
+                Title = createNoteDto.Title,
+                Description = createNoteDto.Description,
+                Colour = createNoteDto.Colour,
+                IsArchived = false,
+                IsDeleted = false
+            };
         }
+
+
+
+
+
+        //if (!result)
+        //{
+        //  throw new NoteNotCreatedException("Error occured while creating note");
+        //}
+
+        //var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
+
+        //var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
+        //return allNotes.Reverse().ToList();
+
+        //return true;
+        //}
+
     }
 
     public async Task<IEnumerable<GetNoteDto>> GetAllNotes(int userId)
     {
-        var query = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
-
+        //var query = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
+        var query = "SELECT * FROM Notes WHERE UserId=@userId";
         using (var connection = _appDbContext.CreateConnection())
         {
+
             var allNotes = await connection.QueryAsync<GetNoteDto>(query, new { userId });
 
             //if (allNotes != null)
             return allNotes.Reverse().ToList();
             //else
-            //    return Enumerable.Empty<GetNoteDto>();
+            //    return Enumerable.Empty<GetNoteDto>();                        
         }
-
     }
 
-    public async Task<IEnumerable<GetNoteDto>> UpdateNote(UpdateNoteDto updateNoteDto, int userId, int noteId)
+    public async Task<GetNoteDto> UpdateNote(UpdateNoteDto updateNoteDto, int userId, int noteId)
     {
-
+        var parameters = new DynamicParameters();
+        parameters.Add("noteId", noteId, DbType.Int32);
+        parameters.Add("title", string.IsNullOrEmpty(updateNoteDto.Title) ? null : updateNoteDto.Title, DbType.String);
+        parameters.Add("description", string.IsNullOrEmpty(updateNoteDto.Description) ? null : updateNoteDto.Description, DbType.String);
+        parameters.Add("colour", string.IsNullOrEmpty(updateNoteDto.Colour) ? null : updateNoteDto.Colour, DbType.String);
+        parameters.Add("userId", userId, DbType.Int32);
 
         var updateQuery = "UPDATE Notes " +
                     "SET Title=@title, " +
                     "Description=@description, " +
                     "Colour=@colour WHERE UserId=@userId AND NoteId=@noteId";
 
-        //var getNoteByIdQuery = "SELECT * FROM Notes WHERE UserId=@userId AND NoteId=@noteId";
-
-        //var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
 
         using (var connection = _appDbContext.CreateConnection())
         {
 
-            //QuerySingleAsync will return note if found otherwise will throw exception not found
-            //var noteById = await connection.QuerySingleAsync<GetNoteDto>(getNoteByIdQuery,
-            //                                                           new { UserId = userId, NoteId = noteId });
-
-            //string prevTitle = noteById.Title;
-            //string prevDescription = noteById.Description;
-            //string prevColour = noteById.Colour;
-
-            //if the neew entry is empty then we will return previous value
-            //string finalTitle = CheckIfEmpty(prevTitle, updateNoteDto.Title);
-            //string finalDescription = CheckIfEmpty(prevDescription, updateNoteDto.Description);
-            //string finalColour = CheckIfEmpty(prevColour, updateNoteDto.Colour);
-
-            var parameters = new DynamicParameters();
-            parameters.Add("noteId", noteId, DbType.Int32);
-            parameters.Add("title", string.IsNullOrEmpty(updateNoteDto.Title) ? null : updateNoteDto.Title, DbType.String);
-            parameters.Add("description", string.IsNullOrEmpty(updateNoteDto.Description) ? null : updateNoteDto.Description, DbType.String);
-            parameters.Add("colour", string.IsNullOrEmpty(updateNoteDto.Colour) ? null : updateNoteDto.Colour, DbType.String);
-            //parameters.Add("description", finalDescription, DbType.String);
-            //parameters.Add("colour", finalColour, DbType.String);
-            parameters.Add("userId", userId, DbType.Int32);
-
-
-            //possibility of zero or more rows getting updated due to QuerySingleOrDefaultAsync
-            //bool result = await connection.QuerySingleOrDefaultAsync<bool>(updateQuery, parameters);
-
-
-            //QuerySingleOrDefaultAsync<bool> method is typically
-            //used to retrieve a single boolean value from the database,
-            //not to execute update operations.
-            //To fix this, you should use ExecuteAsync instead of QuerySingleOrDefaultAsync<bool>
             int result = await connection.ExecuteAsync(updateQuery, parameters);
-
             if (result == 0)
-                throw new UpdateFailException("Update failed please try again");
+                throw new UpdateFailException("Update failed please try again due to wrong NoteId");
 
 
-            //QueryAsync returns a collection of rows. It's useful when you expect multiple rows to be returned from the database.
-            //var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
-            //return allNotes.Reverse().ToList();
+            return new GetNoteDto
+            {
+                NoteId = noteId,
+                Title = updateNoteDto.Title,
+                Description = updateNoteDto.Description,
+                Colour = updateNoteDto.Colour,
+                IsArchived = false,
+                IsDeleted = false
+            };
 
-            return await GetAllNotes(userId);
         }
     }
 
-    /*public string CheckIfEmpty(string previous, string current)
-    {
-        return string.IsNullOrEmpty(current) ? previous : current;
-    }*/
 }

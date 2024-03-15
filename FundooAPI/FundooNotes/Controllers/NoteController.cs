@@ -28,25 +28,26 @@ namespace FundooNotes.Controllers
                 var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 int userIdClaimedInInt = Convert.ToInt32(userIdClaimed);
-                var notes = await _noteBL.CreateNote(createNoteDto, userIdClaimedInInt);
+                var newNote = await _noteBL.CreateNote(createNoteDto, userIdClaimedInInt);
 
-                var response = new FundooResponseModel<IEnumerable<GetNoteDto>>
+                var response = new FundooResponseModel<GetNoteDto>
                 {
                     //Success = true,
                     Message = "note created successfully",
-                    Data = notes
+                    Data = newNote
                 };
                 return Ok(response);
             }
-            catch (NoteNotCreatedException ex)
+            catch (Exception ex)
             {
-                var response = new FundooResponseModel<GetNoteDto>
+                var response = new FundooResponseModel<string>
                 {
                     Success = false,
                     Message = ex.Message,
                     //Data = null
                 };
-                return StatusCode(401, response); //401 error returned as the user is unauthorized
+                return StatusCode(500, response); //returning 500 error code as this error
+                                                  //can occur only due to server error
             }
         }
 
@@ -59,19 +60,19 @@ namespace FundooNotes.Controllers
                 var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
 
-                var notes = await _noteBL.GetAllNotes(userIdClaimedToInt);
+                var allNotes = await _noteBL.GetAllNotes(userIdClaimedToInt);
 
                 var response = new FundooResponseModel<IEnumerable<GetNoteDto>>
                 {
                     //Success = true,
                     Message = "Retrieved all notes successfully",
-                    Data = notes
+                    Data = allNotes
                 };
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                var response = new FundooResponseModel<GetNoteDto>
+                var response = new FundooResponseModel<string>
                 {
                     Success = false,
                     Message = ex.Message,
@@ -93,7 +94,7 @@ namespace FundooNotes.Controllers
 
                 var result = await _noteBL.UpdateNote(updateNoteDto, userIdClaimedToInt, noteId);
 
-                var response = new FundooResponseModel<IEnumerable<GetNoteDto>>
+                var response = new FundooResponseModel<GetNoteDto>
                 {
                     //Success = true,
                     Message = "Updated note successfully",
@@ -103,7 +104,7 @@ namespace FundooNotes.Controllers
             }
             catch (UpdateFailException ex)
             {
-                var response = new FundooResponseModel<GetNoteDto>
+                var response = new FundooResponseModel<string>
                 {
                     Success = false,
                     Message = ex.Message,
@@ -111,15 +112,16 @@ namespace FundooNotes.Controllers
                 };
                 return BadRequest(response); //status code of 400 is returned as there is client error
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
-                var response = new FundooResponseModel<GetNoteDto>
+                var response = new FundooResponseModel<string>
                 {
                     Success = false,
                     Message = ex.Message,
                     //Data = null
                 };
-                return NotFound(response); //status code of 404 is returned as the note is not found
+                return StatusCode(500, response); //returning 500 error code as this error
+                                                  //can occur only due to server error
             }
         }
     }
