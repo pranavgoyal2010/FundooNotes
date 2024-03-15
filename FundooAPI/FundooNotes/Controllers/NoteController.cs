@@ -21,7 +21,7 @@ namespace FundooNotes.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateNote(CreateNoteDto createNoteDto)
+        public async Task<IActionResult> CreateNote([FromBody] CreateNoteDto createNoteDto)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace FundooNotes.Controllers
                 };
                 return Ok(response);
             }
-            catch (ArgumentNullException ex)
+            catch (NoteNotCreatedException ex)
             {
                 var response = new FundooResponseModel<GetNoteDto>
                 {
@@ -110,6 +110,16 @@ namespace FundooNotes.Controllers
                     //Data = null
                 };
                 return BadRequest(response); //status code of 400 is returned as there is client error
+            }
+            catch (InvalidOperationException ex)
+            {
+                var response = new FundooResponseModel<GetNoteDto>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    //Data = null
+                };
+                return NotFound(response); //status code of 404 is returned as the note is not found
             }
         }
     }

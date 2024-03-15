@@ -6,7 +6,7 @@ public class CreateNoteDto
 {
     [Required]
     public string Title { get; set; }
-    public string? Description { get; set; }
+    public string Description { get; set; } = string.Empty;
     public string Colour { get; set; } = string.Empty;
 }
 
@@ -31,18 +31,18 @@ public class UpdateNoteDto
 {
     //[Required]
     //public int NoteId { get; set; }
-    [Required]
-    public string Title { get; set; }
-    public string? Description { get; set; }
+    //[Required]
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     public string Colour { get; set; } = string.Empty;
 }
 
 public class GetNoteDto
 {
     public int NoteId { get; set; }
-    public string Title { get; set; }
-    public string? Description { get; set; }
-    public string Colour { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Colour { get; set; } = string.Empty;
     public bool IsArchived { get; set; }
     public bool IsDeleted { get; set; }
 
