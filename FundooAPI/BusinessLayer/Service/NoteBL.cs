@@ -27,4 +27,14 @@ public class NoteBL : INoteBL
     {
         return _noteRL.UpdateNote(updateNoteDto, userId, noteId);
     }
+
+    public Task<GetNoteDto> TrashNote(int userId, int noteId)
+    {
+        return _noteRL.TrashNote(userId, noteId);
+    }
+
+    public Task<GetNoteDto> ArchiveNote(int userId, int noteId)
+    {
+        return _noteRL.ArchiveNote(userId, noteId);
+    }
 }
