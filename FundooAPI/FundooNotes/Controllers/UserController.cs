@@ -71,10 +71,10 @@ namespace FundooNotes.Controllers
             {
                 var result = await _userBL.LoginUser(userLoginDto);
 
-                var response = new FundooResponseModel<UserLoginDto>
+                var response = new FundooResponseModel<string>
                 {
                     Message = "Login successful",
-                    Token = result
+                    Data = result
                 };
                 return Ok(response);
 

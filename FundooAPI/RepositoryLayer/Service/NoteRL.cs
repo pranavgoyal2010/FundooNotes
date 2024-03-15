@@ -63,6 +63,8 @@ public class NoteRL : INoteRL
 
             var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
             return allNotes.Reverse().ToList();
+
+            //return true;
         }
     }
 
@@ -91,16 +93,16 @@ public class NoteRL : INoteRL
                     "Description=@description, " +
                     "Colour=@colour WHERE UserId=@userId AND NoteId=@noteId";
 
-        var getNoteByIdQuery = "SELECT * FROM Notes WHERE UserId=@userId AND NoteId=@noteId";
+        //var getNoteByIdQuery = "SELECT * FROM Notes WHERE UserId=@userId AND NoteId=@noteId";
 
-        var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
+        //var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
 
         using (var connection = _appDbContext.CreateConnection())
         {
 
             //QuerySingleAsync will return note if found otherwise will throw exception not found
-            var noteById = await connection.QuerySingleAsync<GetNoteDto>(getNoteByIdQuery,
-                                                                        new { UserId = userId, NoteId = noteId });
+            //var noteById = await connection.QuerySingleAsync<GetNoteDto>(getNoteByIdQuery,
+            //                                                           new { UserId = userId, NoteId = noteId });
 
             //string prevTitle = noteById.Title;
             //string prevDescription = noteById.Description;
@@ -112,11 +114,13 @@ public class NoteRL : INoteRL
             //string finalColour = CheckIfEmpty(prevColour, updateNoteDto.Colour);
 
             var parameters = new DynamicParameters();
-            //parameters.Add("noteId", noteId, DbType.Int32);
-            //parameters.Add("title", finalTitle, DbType.String);
+            parameters.Add("noteId", noteId, DbType.Int32);
+            parameters.Add("title", string.IsNullOrEmpty(updateNoteDto.Title) ? null : updateNoteDto.Title, DbType.String);
+            parameters.Add("description", string.IsNullOrEmpty(updateNoteDto.Description) ? null : updateNoteDto.Description, DbType.String);
+            parameters.Add("colour", string.IsNullOrEmpty(updateNoteDto.Colour) ? null : updateNoteDto.Colour, DbType.String);
             //parameters.Add("description", finalDescription, DbType.String);
             //parameters.Add("colour", finalColour, DbType.String);
-            //parameters.Add("userId", userId, DbType.Int32);
+            parameters.Add("userId", userId, DbType.Int32);
 
 
             //possibility of zero or more rows getting updated due to QuerySingleOrDefaultAsync
@@ -134,13 +138,15 @@ public class NoteRL : INoteRL
 
 
             //QueryAsync returns a collection of rows. It's useful when you expect multiple rows to be returned from the database.
-            var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
-            return allNotes.Reverse().ToList();
+            //var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
+            //return allNotes.Reverse().ToList();
+
+            return await GetAllNotes(userId);
         }
     }
 
-    public string CheckIfEmpty(string previous, string current)
+    /*public string CheckIfEmpty(string previous, string current)
     {
         return string.IsNullOrEmpty(current) ? previous : current;
-    }
+    }*/
 }
