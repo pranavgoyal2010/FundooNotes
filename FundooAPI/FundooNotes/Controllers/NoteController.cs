@@ -177,10 +177,10 @@ namespace FundooNotes.Controllers
 
                 var result = await _noteBL.TrashNote(userIdClaimedToInt, noteId);
 
-                var response = new FundooResponseModel<GetNoteDto>
+                var response = new FundooResponseModel<bool>
                 {
-                    Message = "Operation performed successfully",
-                    Data = result
+                    //Message = "Operation performed successfully",                    
+                    Message = result ? "Note trashed successfully" : "Note untrashed successfully"
                 };
                 return Ok(response);
             }
@@ -216,10 +216,10 @@ namespace FundooNotes.Controllers
 
                 var result = await _noteBL.ArchiveNote(userIdClaimedToInt, noteId);
 
-                var response = new FundooResponseModel<GetNoteDto>
+                var response = new FundooResponseModel<bool>
                 {
-                    Message = "Operation performed successfully",
-                    Data = result
+                    //Message = "Operation performed successfully",                    
+                    Message = result ? "Note archived successfully" : "Note unarchived successfully"
                 };
                 return Ok(response);
             }

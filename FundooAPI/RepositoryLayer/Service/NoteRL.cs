@@ -151,11 +151,12 @@ public class NoteRL : INoteRL
         }
     }
 
-    public async Task<GetNoteDto> TrashNote(int userId, int noteId)
+    public async Task<bool> TrashNote(int userId, int noteId)
     {
         var updateQuery = "UPDATE Notes SET IsDeleted = CASE WHEN IsDeleted = 1 THEN 0 ELSE 1 END " +
             "WHERE NoteId=@noteId AND UserId=@userId;";
 
+        var selectQuery = "SELECT IsDeleted FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -165,23 +166,22 @@ public class NoteRL : INoteRL
                 throw new UpdateFailException("Move to trash failed please try again due to wrong NoteId");
 
 
-            // Fetch the updated note
-            var selectQuery = "SELECT * FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
-
-            var updatedNote = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
-            return updatedNote;
+            // Fetch the updated note            
+            var selectQueryResult = await connection.QuerySingleOrDefaultAsync<bool>(selectQuery, new { userId, noteId });
+            return selectQueryResult;
 
         }
 
     }
 
-    public async Task<GetNoteDto> ArchiveNote(int userId, int noteId)
+    public async Task<bool> ArchiveNote(int userId, int noteId)
     {
         var isDeletedQuery = "SELECT IsDeleted FROM Notes WHERE NoteId=@noteId AND UserId=@userId;";
 
         var updateQuery = "UPDATE Notes SET IsArchived = CASE WHEN IsArchived = 1 THEN 0 ELSE 1 END " +
             "WHERE NoteId=@noteId AND UserId=@userId AND IsDeleted=0;";
 
+        var isArchivedQuery = "SELECT IsArchived FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -194,11 +194,9 @@ public class NoteRL : INoteRL
                 throw new UpdateFailException("Move to archive failed please try again due to wrong NoteId");
 
 
-            // Fetch the updated note
-            var selectQuery = "SELECT * FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
-
-            var updatedNote = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
-            return updatedNote;
+            // Fetch the updated note            
+            var isArchivedQueryResult = await connection.QuerySingleOrDefaultAsync<bool>(isArchivedQuery, new { userId, noteId });
+            return isArchivedQueryResult;
 
         }
 
