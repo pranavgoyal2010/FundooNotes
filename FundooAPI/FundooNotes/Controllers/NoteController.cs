@@ -102,7 +102,7 @@ namespace FundooNotes.Controllers
                 };
                 return Ok(response);
             }
-            catch (NullReferenceException ex)
+            catch (NoteDoesNotExistException ex)
             {
                 var response = new FundooResponseModel<string>
                 {
@@ -110,8 +110,7 @@ namespace FundooNotes.Controllers
                     Message = ex.Message,
                     //Data = null
                 };
-                return BadRequest(response); //returning 500 error code as this error
-                                             //can occur only due to server error
+                return BadRequest(response); //returning 400 error code as this client error                                             
             }
             catch (Exception ex)
             {
@@ -223,6 +222,15 @@ namespace FundooNotes.Controllers
                 };
                 return Ok(response);
             }
+            catch (ArchiveFailException ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                };
+                return BadRequest(response); //status code of 400 is returned as there is client error
+            }
             catch (UpdateFailException ex)
             {
                 var response = new FundooResponseModel<string>
@@ -257,7 +265,7 @@ namespace FundooNotes.Controllers
 
                 var response = new FundooResponseModel<bool>
                 {
-                    Message = "Operation performed successfully",
+                    Message = "Note deleted permanently",
                     //Data = result
                 };
                 return Ok(response);

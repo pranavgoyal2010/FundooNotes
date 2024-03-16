@@ -116,7 +116,7 @@ public class NoteRL : INoteRL
             if (note != null)
                 return note;
             else
-                throw new NullReferenceException("Note does not exist");
+                throw new NoteDoesNotExistException("Note does not exist due to wrong noteId");
         }
     }
 
@@ -187,7 +187,7 @@ public class NoteRL : INoteRL
         {
             bool isDeletedQueryResult = await connection.QuerySingleOrDefaultAsync<bool>(isDeletedQuery, new { userId, noteId });
             if (isDeletedQueryResult)
-                throw new UpdateFailException("Move to archive failed because note is in trash");
+                throw new ArchiveFailException("Move to archive failed because note is in trash");
 
             int updateQueryResult = await connection.ExecuteAsync(updateQuery, new { userId, noteId });
             if (updateQueryResult == 0)

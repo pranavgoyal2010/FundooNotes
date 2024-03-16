@@ -22,7 +22,8 @@ builder.Services.AddScoped<IUserRL, UserRL>();
 builder.Services.AddScoped<IAuthServiceRL, AuthServiceRL>();
 builder.Services.AddScoped<INoteBL, NoteBL>();
 builder.Services.AddScoped<INoteRL, NoteRL>();
-
+builder.Services.AddScoped<ICollaborateBL, CollaborateBL>();
+builder.Services.AddScoped<ICollaborateRL, CollaborateRL>();
 // Configure JWT authentication
 
 // Retrieve the secret key from appsettings.json for JWT token validation
