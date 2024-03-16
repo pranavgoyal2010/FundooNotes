@@ -23,6 +23,11 @@ public class NoteBL : INoteBL
         return _noteRL.GetAllNotes(userId);
     }
 
+    public Task<GetNoteDto> GetNoteById(int userId, int noteId)
+    {
+        return _noteRL.GetNoteById(userId, noteId);
+    }
+
     public Task<GetNoteDto> UpdateNote(UpdateNoteDto updateNoteDto, int userId, int noteId)
     {
         return _noteRL.UpdateNote(updateNoteDto, userId, noteId);
@@ -36,5 +41,10 @@ public class NoteBL : INoteBL
     public Task<GetNoteDto> ArchiveNote(int userId, int noteId)
     {
         return _noteRL.ArchiveNote(userId, noteId);
+    }
+
+    public Task<bool> DeleteNote(int userId, int noteId)
+    {
+        return _noteRL.DeleteNote(userId, noteId);
     }
 }

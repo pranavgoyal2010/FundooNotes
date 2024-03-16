@@ -84,6 +84,49 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
+        [HttpGet("{noteId}")]
+        public async Task<IActionResult> GetNoteById(int noteId)
+        {
+            try
+            {
+                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+
+                var note = await _noteBL.GetNoteById(userIdClaimedToInt, noteId);
+
+                var response = new FundooResponseModel<GetNoteDto>
+                {
+                    //Success = true,
+                    Message = "Retrieved note successfully",
+                    Data = note
+                };
+                return Ok(response);
+            }
+            catch (NullReferenceException ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    //Data = null
+                };
+                return BadRequest(response); //returning 500 error code as this error
+                                             //can occur only due to server error
+            }
+            catch (Exception ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    //Data = null
+                };
+                return StatusCode(500, response); //returning 500 error code as this error
+                                                  //can occur only due to server error
+            }
+        }
+
+        [Authorize]
         [HttpPut("{noteId}")]
         public async Task<IActionResult> UpdateNote(int noteId, [FromBody] UpdateNoteDto updateNoteDto)
         {
@@ -181,6 +224,45 @@ namespace FundooNotes.Controllers
                 return Ok(response);
             }
             catch (UpdateFailException ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                };
+                return BadRequest(response); //status code of 400 is returned as there is client error
+            }
+            catch (Exception ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                };
+                return StatusCode(500, response); //returning 500 error code as this error
+                                                  //can occur only due to server error
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("{noteId}")]
+        public async Task<IActionResult> DeleteNote(int noteId)
+        {
+            try
+            {
+                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+
+                var result = await _noteBL.DeleteNote(userIdClaimedToInt, noteId);
+
+                var response = new FundooResponseModel<bool>
+                {
+                    Message = "Operation performed successfully",
+                    Data = result
+                };
+                return Ok(response);
+            }
+            catch (DeleteFailException ex)
             {
                 var response = new FundooResponseModel<string>
                 {

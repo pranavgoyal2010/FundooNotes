@@ -92,16 +92,31 @@ public class NoteRL : INoteRL
     public async Task<IEnumerable<GetNoteDto>> GetAllNotes(int userId)
     {
         //var query = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
-        var query = "SELECT * FROM Notes WHERE UserId=@userId";
+        var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId";
         using (var connection = _appDbContext.CreateConnection())
         {
 
-            var allNotes = await connection.QueryAsync<GetNoteDto>(query, new { userId });
+            var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, new { userId });
 
             //if (allNotes != null)
             return allNotes.Reverse().ToList();
             //else
             //    return Enumerable.Empty<GetNoteDto>();                        
+        }
+    }
+
+    public async Task<GetNoteDto> GetNoteById(int userId, int noteId)
+    {
+        var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND NoteId=@noteId";
+        using (var connection = _appDbContext.CreateConnection())
+        {
+
+            var note = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
+
+            if (note != null)
+                return note;
+            else
+                throw new NullReferenceException("Note does not exist");
         }
     }
 
@@ -182,6 +197,21 @@ public class NoteRL : INoteRL
 
         }
 
+    }
+
+    public async Task<bool> DeleteNote(int userId, int noteId)
+    {
+        var deleteQuery = "DELETE FROM Notes WHERE NoteId=@noteId AND UserId=@userId";
+
+        using (var connection = _appDbContext.CreateConnection())
+        {
+            int result = await connection.ExecuteAsync(deleteQuery, new { userId, noteId });
+
+            if (result == 0)
+                throw new DeleteFailException("Delete failed please try again due to wrong NoteId");
+
+            return true;
+        }
     }
 
 }
