@@ -258,7 +258,7 @@ namespace FundooNotes.Controllers
                 var response = new FundooResponseModel<bool>
                 {
                     Message = "Operation performed successfully",
-                    Data = result
+                    //Data = result
                 };
                 return Ok(response);
             }

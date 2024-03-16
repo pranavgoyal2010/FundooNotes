@@ -177,15 +177,20 @@ public class NoteRL : INoteRL
 
     public async Task<GetNoteDto> ArchiveNote(int userId, int noteId)
     {
+        var isDeletedQuery = "SELECT IsDeleted FROM Notes WHERE NoteId=@noteId AND UserId=@userId;";
+
         var updateQuery = "UPDATE Notes SET IsArchived = CASE WHEN IsArchived = 1 THEN 0 ELSE 1 END " +
             "WHERE NoteId=@noteId AND UserId=@userId AND IsDeleted=0;";
 
 
         using (var connection = _appDbContext.CreateConnection())
         {
-            int result = await connection.ExecuteAsync(updateQuery, new { userId, noteId });
+            bool isDeletedQueryResult = await connection.QuerySingleOrDefaultAsync<bool>(isDeletedQuery, new { userId, noteId });
+            if (isDeletedQueryResult)
+                throw new UpdateFailException("Move to archive failed because note is in trash");
 
-            if (result == 0)
+            int updateQueryResult = await connection.ExecuteAsync(updateQuery, new { userId, noteId });
+            if (updateQueryResult == 0)
                 throw new UpdateFailException("Move to archive failed please try again due to wrong NoteId");
 
 
