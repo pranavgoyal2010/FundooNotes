@@ -29,6 +29,25 @@ public class CollaborateRL : ICollaborateRL
         }
     }
 
+    public async Task<IEnumerable<GetCollaboratorDto>> GetAllCollaboratorsById(int userId, int noteId)
+    {
+        var selectQuery = "SELECT * FROM Collaborators WHERE UserId=@userId AND NoteId=@noteId";
+
+        //query to check if the entered noteId exists or not
+        var noteExistsQuery = "SELECT COUNT(*) FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
+
+        using (var connection = _appDbContext.CreateConnection())
+        {
+            bool noteExists = await connection.QueryFirstOrDefaultAsync<bool>(noteExistsQuery, new { userId, noteId });
+            if (!noteExists)
+                throw new NoteDoesNotExistException("Note Not found with provided note Id");
+
+            var allCollaborators = await connection.QueryAsync<GetCollaboratorDto>(selectQuery, new { userId, noteId });
+
+            return allCollaborators.Reverse().ToList();
+        }
+    }
+
     public async Task<bool> AddCollaborator(int userId, int noteId, AddCollaboratorDto addCollaboratorDto)
     {
         if (!isValidEmail(addCollaboratorDto.CollaboratorEmail))
@@ -99,7 +118,7 @@ public class CollaborateRL : ICollaborateRL
 
             bool alreadyCollaborator = await connection.QueryFirstOrDefaultAsync<bool>(alreadyCollaboratorQuery, parameters);
             if (alreadyCollaborator)
-                throw new InvalidCredentialsException("email is already a collaborator");
+                throw new InvalidCredentialsException("email is already a collaborator for provided noteId");
 
             return await connection.QueryFirstOrDefaultAsync<bool>(insertQuery, parameters);
         }
