@@ -16,4 +16,8 @@ public class CollaborateBL : ICollaborateBL
     {
         return _collaborateRL.AddCollaborator(userId, noteId, addCollaboratorDto);
     }
+    public Task<bool> RemoveCollaborator(int userId, int noteId, RemoveCollaboratorDto removeCollaboratorDto)
+    {
+        return _collaborateRL.RemoveCollaborator(userId, noteId, removeCollaboratorDto);
+    }
 }

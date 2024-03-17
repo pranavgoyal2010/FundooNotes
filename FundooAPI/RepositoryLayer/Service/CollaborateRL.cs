@@ -33,15 +33,18 @@ public class CollaborateRL : ICollaborateRL
 
         // Adjust the insert query to include a conditional expression that returns true if at least one row is inserted,
         // and false otherwise, ensuring the returned value reflects the success of the insertion operation
-        // hence select query is used.
+        // hence select query is used just after insertion.
 
         var insertQuery = "INSERT INTO Collaborators(UserId, NoteId, CollaboratorEmail) VALUES(@userId, @noteId, @collaboratorEmail);" +
             "SELECT * FROM Collaborators WHERE CollaborateId = SCOPE_IDENTITY();";
 
+        //query if the user trys collaborate with itself
         var sameEmailQuery = "SELECT Email FROM Users WHERE UserId=@userId";
 
+        //query to check if the email entered is registered email or not
         var emailExistsQuery = "SELECT COUNT(*) FROM Users WHERE Email=@collaboratorEmail";
 
+        //query to checko if the entered noteId exists or not
         var noteExistsQuery = "SELECT COUNT(*) FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
 
         using (var connection = _appDbContext.CreateConnection())
@@ -59,7 +62,7 @@ public class CollaborateRL : ICollaborateRL
                         NoteId INT,      
                         CollaboratorEmail VARCHAR(100),
                         CONSTRAINT FK_UserId FOREIGN KEY (UserId) REFERENCES Users (UserId),
-                        CONSTRAINT FK_NoteId FOREIGN KEY (NoteId) REFERENCES Notes (NoteId),
+                        CONSTRAINT FK_NoteId FOREIGN KEY (NoteId) REFERENCES Notes (NoteId) ON DELETE CASCADE,
                         CONSTRAINT FK_CollaboratorEmail FOREIGN KEY (CollaboratorEmail) REFERENCES Users (Email)
                     );"
                 );
@@ -81,6 +84,50 @@ public class CollaborateRL : ICollaborateRL
 
             return await connection.QueryFirstOrDefaultAsync<bool>(insertQuery, parameters);
         }
+    }
+
+    public async Task<bool> RemoveCollaborator(int userId, int noteId, RemoveCollaboratorDto removeCollaboratorDto)
+    {
+        if (!isValidEmail(removeCollaboratorDto.CollaboratorEmail))
+            throw new InvalidCredentialsException("Invalid email format");
+
+        var parameters = new DynamicParameters();
+
+        parameters.Add("userId", userId, DbType.Int32);
+        parameters.Add("noteId", noteId, DbType.Int32);
+        parameters.Add("collaboratorEmail", removeCollaboratorDto.CollaboratorEmail, DbType.String);
+
+        var deleteQuery = "DELETE FROM Collaborators WHERE UserId=@userId AND NoteId=@noteId AND CollaboratorEmail=@collaboratorEmail;";// +
+                                                                                                                                        //"SELECT * FROM Collaborators WHERE CollaborateId = SCOPE_IDENTITY();";
+
+        var sameEmailQuery = "SELECT Email FROM Users WHERE UserId=@userId";
+
+        var emailExistsQuery = "SELECT COUNT(*) FROM Users WHERE Email=@collaboratorEmail";
+
+        var noteExistsQuery = "SELECT COUNT(*) FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
+
+        using (var connection = _appDbContext.CreateConnection())
+        {
+            bool emailExists = await connection.QueryFirstOrDefaultAsync<bool>(emailExistsQuery, parameters);
+            if (!emailExists)
+                throw new InvalidCredentialsException("Email id is not registered");
+
+            string sameEmail = await connection.QueryFirstAsync<string>(sameEmailQuery, parameters);
+            if (sameEmail.Equals(removeCollaboratorDto.CollaboratorEmail))
+                throw new InvalidCredentialsException("user cannot part with itself");
+
+            bool noteExists = await connection.QueryFirstOrDefaultAsync<bool>(noteExistsQuery, parameters);
+            if (!noteExists)
+                throw new NoteDoesNotExistException("Note Not found with provided note Id");
+
+            //return await connection.QueryFirstOrDefaultAsync<bool>(deleteQuery, parameters);
+            int result = await connection.ExecuteAsync(deleteQuery, parameters);
+            if (result == 0)
+                throw new DeleteFailException("Provided collaborator email is not collaborated with provided noteId");
+
+            return true;
+        }
+
     }
 
     public bool isValidEmail(string input)
