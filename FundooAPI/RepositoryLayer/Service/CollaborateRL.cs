@@ -38,14 +38,17 @@ public class CollaborateRL : ICollaborateRL
         var insertQuery = "INSERT INTO Collaborators(UserId, NoteId, CollaboratorEmail) VALUES(@userId, @noteId, @collaboratorEmail);" +
             "SELECT * FROM Collaborators WHERE CollaborateId = SCOPE_IDENTITY();";
 
-        //query if the user trys collaborate with itself
-        var sameEmailQuery = "SELECT Email FROM Users WHERE UserId=@userId";
-
         //query to check if the email entered is registered email or not
         var emailExistsQuery = "SELECT COUNT(*) FROM Users WHERE Email=@collaboratorEmail";
 
-        //query to checko if the entered noteId exists or not
+        //query if the user trys collaborate with itself
+        var sameEmailQuery = "SELECT Email FROM Users WHERE UserId=@userId";
+
+        //query to check if the entered noteId exists or not
         var noteExistsQuery = "SELECT COUNT(*) FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
+
+        //query to check if the entered email is already collaborator or not.
+        var alreadyCollaboratorQuery = "SELECT COUNT(*) FROM Collaborators WHERE NoteId = @noteId AND UserId = @userId AND CollaboratorEmail=@collaboratorEmail";
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -81,6 +84,10 @@ public class CollaborateRL : ICollaborateRL
             bool noteExists = await connection.QueryFirstOrDefaultAsync<bool>(noteExistsQuery, parameters);
             if (!noteExists)
                 throw new NoteDoesNotExistException("Note Not found with provided note Id");
+
+            bool alreadyCollaborator = await connection.QueryFirstOrDefaultAsync<bool>(alreadyCollaboratorQuery, parameters);
+            if (alreadyCollaborator)
+                throw new InvalidCredentialsException("email is already a collaborator");
 
             return await connection.QueryFirstOrDefaultAsync<bool>(insertQuery, parameters);
         }
