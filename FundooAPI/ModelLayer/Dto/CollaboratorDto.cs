@@ -10,6 +10,8 @@ public class AddCollaboratorDto
 
 public class GetCollaboratorDto
 {
+    public int CollaborateId { get; set; }
+    public int NoteId { get; set; }
     public string CollaboratorEmail { get; set; }
 }
 

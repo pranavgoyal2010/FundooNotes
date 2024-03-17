@@ -20,6 +20,36 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllCollaborators()
+        {
+            try
+            {
+                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+
+                var allCollaborators = await _collaborateBL.GetAllCollaborators(userIdClaimedToInt);
+
+                var response = new FundooResponseModel<IEnumerable<GetCollaboratorDto>>
+                {
+                    Message = "Retrieved all collaborators successfully",
+                    Data = allCollaborators
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                };
+                return StatusCode(500, response); //returning 500 error code as this error
+                                                  //can occur only due to server error
+            }
+        }
+
+        [Authorize]
         [HttpPost("{noteId}")]
         public async Task<IActionResult> AddCollaborate(int noteId, AddCollaboratorDto addCollaboratorDto)
         {

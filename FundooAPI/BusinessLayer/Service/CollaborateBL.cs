@@ -12,6 +12,10 @@ public class CollaborateBL : ICollaborateBL
     {
         _collaborateRL = collaborateRL;
     }
+    public Task<IEnumerable<GetCollaboratorDto>> GetAllCollaborators(int userId)
+    {
+        return _collaborateRL.GetAllCollaborators(userId);
+    }
     public Task<bool> AddCollaborator(int userId, int noteId, AddCollaboratorDto addCollaboratorDto)
     {
         return _collaborateRL.AddCollaborator(userId, noteId, addCollaboratorDto);

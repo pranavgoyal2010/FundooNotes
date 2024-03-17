@@ -17,6 +17,18 @@ public class CollaborateRL : ICollaborateRL
         _appDbContext = appDbContext;
     }
 
+    public async Task<IEnumerable<GetCollaboratorDto>> GetAllCollaborators(int userId)
+    {
+        var selectQuery = "SELECT * FROM Collaborators WHERE UserId=@userId";
+        using (var connection = _appDbContext.CreateConnection())
+        {
+
+            var allCollaborators = await connection.QueryAsync<GetCollaboratorDto>(selectQuery, new { userId });
+
+            return allCollaborators.Reverse().ToList();
+        }
+    }
+
     public async Task<bool> AddCollaborator(int userId, int noteId, AddCollaboratorDto addCollaboratorDto)
     {
         if (!isValidEmail(addCollaboratorDto.CollaboratorEmail))
