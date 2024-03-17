@@ -57,57 +57,48 @@ public class NoteRL : INoteRL
 
             return await connection.QuerySingleAsync<GetNoteDto>(insertQuery, parameters);
 
-
-            /*var Id = await connection.ExecuteScalarAsync<int>(insertQuery, parameters);
-            return new GetNoteDto
-            {
-                NoteId = Id,
-                Title = createNoteDto.Title,
-                Description = createNoteDto.Description,
-                Colour = createNoteDto.Colour,
-                //IsArchived = false,
-                //IsDeleted = false
-            };*/
         }
-
-
-
-
-
-        //if (!result)
-        //{
-        //  throw new NoteNotCreatedException("Error occured while creating note");
-        //}
-
-        //var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
-
-        //var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, parameters);
-        //return allNotes.Reverse().ToList();
-
-        //return true;
-        //}
 
     }
 
     public async Task<IEnumerable<GetNoteDto>> GetAllNotes(int userId)
     {
         //var query = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
-        var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId";
+        //var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId";
+
+        //following query will display all notes including the collaborated notes
+        var selectQuery = @"SELECT N.*
+                            FROM Notes N
+                            WHERE N.UserId = @userId                             
+                            UNION ALL
+                            SELECT N.*
+                            FROM Notes N
+                            INNER JOIN Collaborators C ON N.NoteId = C.NoteId
+                            WHERE C.CollaboratorEmail = 
+                                (SELECT Email FROM Users U WHERE U.UserId = @userId);
+                            ";
+
+
         using (var connection = _appDbContext.CreateConnection())
         {
 
             var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, new { userId });
 
-            //if (allNotes != null)
             return allNotes.Reverse().ToList();
-            //else
-            //    return Enumerable.Empty<GetNoteDto>();                        
         }
     }
 
     public async Task<GetNoteDto> GetNoteById(int userId, int noteId)
     {
-        var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND NoteId=@noteId";
+        //var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND NoteId=@noteId";
+
+        var selectQuery = @"SELECT * FROM Notes 
+                            WHERE (UserId = @userId OR NoteId IN (
+                                SELECT NoteId 
+                                FROM Collaborators 
+                                WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
+                            )) AND NoteId = @noteId;";
+
         using (var connection = _appDbContext.CreateConnection())
         {
 
@@ -129,10 +120,27 @@ public class NoteRL : INoteRL
         parameters.Add("colour", string.IsNullOrEmpty(updateNoteDto.Colour) ? null : updateNoteDto.Colour, DbType.String);
         parameters.Add("userId", userId, DbType.Int32);
 
-        var updateQuery = "UPDATE Notes " +
+        /*var updateQuery = "UPDATE Notes " +
                     "SET Title=@title, " +
                     "Description=@description, " +
-                    "Colour=@colour WHERE UserId=@userId AND NoteId=@noteId;";
+                    "Colour=@colour WHERE UserId=@userId AND NoteId=@noteId;";*/
+
+        var updateQuery = @"
+            UPDATE Notes 
+            SET Title = @title, 
+                Description = @description, 
+                Colour = @colour 
+            WHERE NoteId = @noteId AND UserId = @userId;
+
+            UPDATE Notes 
+            SET Title = @title, 
+                Description = @description, 
+                Colour = @colour 
+            WHERE NoteId = @noteId AND NoteId IN (
+                SELECT NoteId FROM Collaborators WHERE CollaboratorEmail = (
+                    SELECT Email FROM Users WHERE UserId = @userId
+                )
+        );";
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -143,7 +151,13 @@ public class NoteRL : INoteRL
                 throw new UpdateFailException("Update failed please try again due to wrong NoteId");
 
 
-            var selectQuery = "SELECT * FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
+            //var selectQuery = "SELECT * FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
+            var selectQuery = @"SELECT * FROM Notes 
+                            WHERE (UserId = @userId OR NoteId IN (
+                                SELECT NoteId 
+                                FROM Collaborators 
+                                WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
+                            )) AND NoteId = @noteId;";
 
             var updatedNote = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
             return updatedNote;
@@ -153,10 +167,25 @@ public class NoteRL : INoteRL
 
     public async Task<bool> TrashNote(int userId, int noteId)
     {
-        var updateQuery = "UPDATE Notes SET IsDeleted = CASE WHEN IsDeleted = 1 THEN 0 ELSE 1 END " +
-            "WHERE NoteId=@noteId AND UserId=@userId;";
+        //var updateQuery = "UPDATE Notes SET IsDeleted = CASE WHEN IsDeleted = 1 THEN 0 ELSE 1 END " +
+        //    "WHERE NoteId=@noteId AND UserId=@userId;";
 
-        var selectQuery = "SELECT IsDeleted FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
+        var updateQuery = @"UPDATE Notes 
+                            SET IsDeleted = CASE WHEN IsDeleted = 1 THEN 0 ELSE 1 END 
+                            WHERE NoteId = @noteId AND (UserId = @userId OR NoteId IN (
+                                SELECT NoteId 
+                                FROM Collaborators 
+                                WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
+                            ));";
+
+        //var selectQuery = "SELECT IsDeleted FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
+
+        var selectQuery = @"SELECT IsDeleted FROM Notes 
+                            WHERE (UserId = @userId OR NoteId IN (
+                                SELECT NoteId 
+                                FROM Collaborators 
+                                WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
+                            )) AND NoteId = @noteId;";
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -176,12 +205,34 @@ public class NoteRL : INoteRL
 
     public async Task<bool> ArchiveNote(int userId, int noteId)
     {
-        var isDeletedQuery = "SELECT IsDeleted FROM Notes WHERE NoteId=@noteId AND UserId=@userId;";
+        //var isDeletedQuery = "SELECT IsDeleted FROM Notes WHERE NoteId=@noteId AND UserId=@userId;";
 
-        var updateQuery = "UPDATE Notes SET IsArchived = CASE WHEN IsArchived = 1 THEN 0 ELSE 1 END " +
-            "WHERE NoteId=@noteId AND UserId=@userId AND IsDeleted=0;";
+        var isDeletedQuery = @"SELECT IsDeleted FROM Notes 
+                            WHERE (UserId = @userId OR NoteId IN (
+                                SELECT NoteId 
+                                FROM Collaborators 
+                                WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
+                            )) AND NoteId = @noteId;";
 
-        var isArchivedQuery = "SELECT IsArchived FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
+        //var updateQuery = "UPDATE Notes SET IsArchived = CASE WHEN IsArchived = 1 THEN 0 ELSE 1 END " +
+        //    "WHERE NoteId=@noteId AND UserId=@userId AND IsDeleted=0;";
+
+        var updateQuery = @"UPDATE Notes 
+                            SET IsArchived = CASE WHEN IsArchived = 1 THEN 0 ELSE 1 END 
+                            WHERE NoteId = @noteId AND (UserId = @userId OR NoteId IN (
+                                SELECT NoteId 
+                                FROM Collaborators 
+                                WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
+                            )) AND IsDeleted=0;";
+
+        //var isArchivedQuery = "SELECT IsArchived FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
+
+        var isArchivedQuery = @"SELECT IsArchived FROM Notes 
+                            WHERE (UserId = @userId OR NoteId IN (
+                                SELECT NoteId 
+                                FROM Collaborators 
+                                WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
+                            )) AND NoteId = @noteId;";
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -204,7 +255,14 @@ public class NoteRL : INoteRL
 
     public async Task<bool> DeleteNote(int userId, int noteId)
     {
-        var deleteQuery = "DELETE FROM Notes WHERE NoteId=@noteId AND UserId=@userId";
+        //var deleteQuery = "DELETE FROM Notes WHERE NoteId=@noteId AND UserId=@userId";
+
+        var deleteQuery = @"DELETE FROM Notes 
+                            WHERE NoteId = @noteId AND (UserId = @userId OR NoteId IN (
+                                SELECT NoteId 
+                                FROM Collaborators 
+                                WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
+                            ));";
 
         using (var connection = _appDbContext.CreateConnection())
         {
