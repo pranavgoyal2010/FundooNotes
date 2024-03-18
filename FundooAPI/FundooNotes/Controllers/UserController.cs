@@ -13,10 +13,12 @@ namespace FundooNotes.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserBL _userBL;
+        private readonly IMailServiceBL _mailServiceBL;
 
-        public UserController(IUserBL userBL)
+        public UserController(IUserBL userBL, IMailServiceBL mailServiceBL)
         {
             _userBL = userBL;
+            _mailServiceBL = mailServiceBL;
         }
 
         [HttpPost]
@@ -100,7 +102,7 @@ namespace FundooNotes.Controllers
             }
         }
 
-        [Authorize]
+        /*[Authorize]
         [HttpGet("protected")]
         public IActionResult ProtectedEndpoint(string expectedUserEmail)
         {
@@ -121,5 +123,146 @@ namespace FundooNotes.Controllers
                 return Ok("Welcome to Fundoo notes");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SendEmail(string to)
+        {
+            string message = "Hello";
+            string mailSubject = "This is a Subject";
+
+            try
+            {
+                bool isEMailSent = await _mailServiceBL.SendEmail(to, message, mailSubject);
+                if (isEMailSent)
+                {
+                    var response = new FundooResponseModel<string>
+                    {
+                        Message = "Email sent successfully",
+                    };
+                    return Ok(response);
+                }
+                else
+                {
+                    var response = new FundooResponseModel<string>
+                    {
+                        Message = "Failed to send email",
+                    };
+                    return BadRequest(response);
+                }
+            }
+            catch (EmailSendingException ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+                return StatusCode(500, response);
+            }
+
+        }*/
+
+        [HttpPatch("{email}")]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            try
+            {
+                string result = await _userBL.ForgotPassword(email);
+                var response = new FundooResponseModel<string>
+                {
+                    Message = "Email sent successfully",
+                    Data = result
+                };
+                return Ok(response);
+            }
+            catch (InvalidCredentialsException ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+                return BadRequest(response);
+            }
+            catch (EmailSendingException ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+                return StatusCode(500, response);
+            }
+            catch (Exception ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+                return StatusCode(500, response);
+            }
+
+        }
+
+        [Authorize]
+        [HttpPatch("resetpassword/{token}")]
+        public async Task<IActionResult> ResetPassword(string token, UserPasswordDto userPasswordDto)
+        {
+            try
+            {
+
+                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+
+                //var userEmail = User.FindFirstValue(ClaimTypes.Email);
+
+                await _userBL.ResetPassword(userPasswordDto.Password, userIdClaimedToInt);
+
+                var response = new FundooResponseModel<string>
+                {
+                    Message = "Password reset successfully",
+                };
+                return Ok(response);
+            }
+            catch (InvalidCredentialsException ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+                return BadRequest(response);
+            }
+            catch (UpdateFailException ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+                return StatusCode(500, response);
+            }
+            catch (Exception ex)
+            {
+                var response = new FundooResponseModel<string>
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+                return StatusCode(500, response);
+            }
+
+
+
+        }
     }
 }

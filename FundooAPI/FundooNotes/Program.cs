@@ -1,8 +1,10 @@
 using BusinessLayer.Interface;
 using BusinessLayer.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ModelLayer.Dto;
 using RepositoryLayer.Context;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Service;
@@ -24,6 +26,15 @@ builder.Services.AddScoped<INoteBL, NoteBL>();
 builder.Services.AddScoped<INoteRL, NoteRL>();
 builder.Services.AddScoped<ICollaborateBL, CollaborateBL>();
 builder.Services.AddScoped<ICollaborateRL, CollaborateRL>();
+
+builder.Services.AddScoped<IMailServiceBL, MailServiceBL>();
+
+builder.Services.Configure<EmailDto>(builder.Configuration.GetSection("EmailDto"));
+builder.Services.AddScoped<IMailServiceRL, MailServiceRL>();
+
+// Change the injection to use IOptions<EmailSettings>
+builder.Services.AddScoped(sp => sp.GetRequiredService<IOptions<EmailDto>>().Value);
+
 // Configure JWT authentication
 
 // Retrieve the secret key from appsettings.json for JWT token validation

@@ -67,7 +67,7 @@ public class NoteRL : INoteRL
         //var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId";
 
         //following query will display all notes including the collaborated notes
-        var selectQuery = @"SELECT N.*
+        /*var selectQuery = @"SELECT N.*
                             FROM Notes N
                             WHERE N.UserId = @userId                             
                             UNION ALL
@@ -75,6 +75,13 @@ public class NoteRL : INoteRL
                             FROM Notes N
                             INNER JOIN Collaborators C ON N.NoteId = C.NoteId
                             WHERE C.CollaboratorEmail = 
+                                (SELECT Email FROM Users U WHERE U.UserId = @userId);
+                            ";*/
+
+        var selectQuery = @"SELECT DISTINCT N.*
+                            FROM Notes N
+                            LEFT JOIN Collaborators C ON N.NoteId = C.NoteId
+                            WHERE N.UserId = @userId OR C.CollaboratorEmail = 
                                 (SELECT Email FROM Users U WHERE U.UserId = @userId);
                             ";
 

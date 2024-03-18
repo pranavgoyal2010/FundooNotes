@@ -60,6 +60,10 @@
               "target": "Package",
               "version": "[2.1.35, )"
             },
+            "DocuSign.eSign.dll": {
+              "target": "Package",
+              "version": "[6.8.0, )"
+            },
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[5.2.0, )"
@@ -67,6 +71,14 @@
             "Microsoft.Extensions.Configuration": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "NETCore.MailKit": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "System.Net.Mail.Abstractions": {
+              "target": "Package",
+              "version": "[1.1.21, )"
             }
           },
           "imports": [
@@ -138,6 +150,10 @@
               "target": "Package",
               "version": "[2.1.35, )"
             },
+            "DocuSign.eSign.dll": {
+              "target": "Package",
+              "version": "[6.8.0, )"
+            },
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[5.2.0, )"
@@ -145,6 +161,14 @@
             "Microsoft.Extensions.Configuration": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "NETCore.MailKit": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "System.Net.Mail.Abstractions": {
+              "target": "Package",
+              "version": "[1.1.21, )"
             }
           },
           "imports": [
@@ -220,6 +244,10 @@
               "target": "Package",
               "version": "[2.1.35, )"
             },
+            "DocuSign.eSign.dll": {
+              "target": "Package",
+              "version": "[6.8.0, )"
+            },
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[5.2.0, )"
@@ -227,6 +255,14 @@
             "Microsoft.Extensions.Configuration": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "NETCore.MailKit": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "System.Net.Mail.Abstractions": {
+              "target": "Package",
+              "version": "[1.1.21, )"
             }
           },
           "imports": [

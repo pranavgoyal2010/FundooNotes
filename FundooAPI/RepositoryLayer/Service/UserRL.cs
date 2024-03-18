@@ -13,10 +13,12 @@ public class UserRL : IUserRL
 {
     private readonly AppDbContext _appDbContext;
     private readonly IAuthServiceRL _authServiceRL;
-    public UserRL(AppDbContext appDbContext, IAuthServiceRL authServiceRL)
+    private readonly IMailServiceRL _mailServiceRL;
+    public UserRL(AppDbContext appDbContext, IAuthServiceRL authServiceRL, IMailServiceRL mailServiceRL)
     {
         _appDbContext = appDbContext;
         _authServiceRL = authServiceRL;
+        _mailServiceRL = mailServiceRL;
     }
 
     public async Task<bool> RegisterUser(UserRegistrationDto userRegistrationDto)
@@ -90,6 +92,61 @@ public class UserRL : IUserRL
             else
                 throw new InvalidCredentialsException("Invalid password");
         }
+    }
+
+    public async Task<string> ForgotPassword(string email)
+    {
+        //var parameters = new DynamicParameters();
+        //parameters.Add("email", email, DbType.String);
+
+        var query = "SELECT * FROM Users WHERE Email = @email";
+
+
+        using (var connection = _appDbContext.CreateConnection())
+        {
+            var user = await connection.QueryFirstOrDefaultAsync<UserEntity>(query, new { email });
+
+            if (user == null)
+                throw new InvalidCredentialsException("user does not exist");
+
+            string token = _authServiceRL.GenerateJwtToken(user);
+
+            // Generate password reset link
+            var url = $"https://localhost:7151/api/user/resetpassword?token={token}";
+
+            // Send password reset email
+            await _mailServiceRL.SendEmail(email, "Reset Password", url);
+
+            return token;
+
+        }
+    }
+
+    public async Task<bool> ResetPassword(string newPassword, int userId)
+    {
+
+        var selectQuery = "SELECT * FROM Users WHERE UserId = @userId";
+
+        var updateQuery = "UPDATE Users SET Password = @hashPassword WHERE UserId=@userId";
+
+        using (var connection = _appDbContext.CreateConnection())
+        {
+            var user = await connection.QueryFirstOrDefaultAsync<UserEntity>(selectQuery, new { userId });
+
+            if (user == null)
+                throw new InvalidCredentialsException("user does not exist");
+
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            //user.Password = hashedPassword;
+
+            int rowsAffected = await connection.ExecuteAsync(updateQuery, new { hashedPassword, userId });
+
+            if (rowsAffected == 0)
+                throw new UpdateFailException("password reset failed.");
+
+            return true;
+        }
+
     }
 
     public bool isValidEmail(string input)

@@ -145,3 +145,11 @@ C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\obj\Debug\net8.0\FundooNotes.sourcelink.json
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\BCrypt.Net.dll
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\DocuSign.eSign.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\MailKit.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\MimeKit.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\NETCore.MailKit.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\System.Net.Mail.Abstractions.dll

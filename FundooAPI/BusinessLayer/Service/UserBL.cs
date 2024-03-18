@@ -21,9 +21,12 @@ public class UserBL : IUserBL
     {
         return _userRL.LoginUser(userLoginDto);
     }
-
-    /*public IAuthServiceRL authService()
+    public Task<string> ForgotPassword(string email)
     {
-        return _authService;
-    }*/
+        return _userRL.ForgotPassword(email);
+    }
+    public Task<bool> ResetPassword(string newPassword, int userId)
+    {
+        return _userRL.ResetPassword(newPassword, userId);
+    }
 }
