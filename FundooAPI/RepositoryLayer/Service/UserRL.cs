@@ -112,9 +112,13 @@ public class UserRL : IUserRL
             string token = _authServiceRL.GenerateJwtToken(user);
 
             // Generate password reset link
-            //var url = $"https://localhost:7151/api/user/resetpassword?token={token}";
+            var url = $"https://localhost:7151/api/user/resetpassword?token={token}";
 
-            var url = $"https://localhost:7151/api/user/resetpassword";
+            //var url = $"https://localhost:7151/api/user/resetpassword";
+
+
+            //var client = new HttpClient();
+            //client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
             // Send password reset email
             await _mailServiceRL.SendEmail(email, "Reset Password", url);

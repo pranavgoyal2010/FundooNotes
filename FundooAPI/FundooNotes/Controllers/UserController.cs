@@ -175,11 +175,14 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                string result = await _userBL.ForgotPassword(userEmailDto.Email);
+                string token = await _userBL.ForgotPassword(userEmailDto.Email);
+
+                //HttpContext.Response.Headers.Add("Authorization", $"Bearer {token}");
+
                 var response = new FundooResponseModel<string>
                 {
                     Message = "Email sent successfully",
-                    Data = result
+                    //Data = result
                 };
                 return Ok(response);
             }
