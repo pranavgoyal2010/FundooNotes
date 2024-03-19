@@ -25,8 +25,8 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+                var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdClaimed);
 
                 var allCollaborators = await _collaborateBL.GetAllCollaborators(userIdClaimedToInt);
 
@@ -55,8 +55,8 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+                var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdClaimed);
 
                 var allCollaborators = await _collaborateBL.GetAllCollaboratorsById(userIdClaimedToInt, noteId);
 

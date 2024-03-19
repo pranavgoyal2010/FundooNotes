@@ -32,7 +32,6 @@ namespace FundooNotes.Controllers
 
                 var response = new FundooResponseModel<GetNoteDto>
                 {
-                    //Success = true,
                     Message = "note created successfully",
                     Data = newNote
                 };
@@ -44,7 +43,6 @@ namespace FundooNotes.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    //Data = null
                 };
                 return StatusCode(500, response); //returning 500 error code as this error
                                                   //can occur only due to server error
@@ -57,14 +55,13 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+                var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdClaimed);
 
                 var allNotes = await _noteBL.GetAllNotes(userIdClaimedToInt);
 
                 var response = new FundooResponseModel<IEnumerable<GetNoteDto>>
                 {
-                    //Success = true,
                     Message = "Retrieved all notes successfully",
                     Data = allNotes
                 };
@@ -76,7 +73,6 @@ namespace FundooNotes.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    //Data = null
                 };
                 return StatusCode(500, response); //returning 500 error code as this error
                                                   //can occur only due to server error
@@ -89,14 +85,13 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+                var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdClaimed);
 
                 var note = await _noteBL.GetNoteById(userIdClaimedToInt, noteId);
 
                 var response = new FundooResponseModel<GetNoteDto>
                 {
-                    //Success = true,
                     Message = "Retrieved note successfully",
                     Data = note
                 };
@@ -108,7 +103,6 @@ namespace FundooNotes.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    //Data = null
                 };
                 return BadRequest(response); //returning 400 error code as this client error                                             
             }
@@ -118,7 +112,6 @@ namespace FundooNotes.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    //Data = null
                 };
                 return StatusCode(500, response); //returning 500 error code as this error
                                                   //can occur only due to server error
@@ -131,8 +124,8 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+                var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdClaimed);
 
                 var result = await _noteBL.UpdateNote(updateNoteDto, userIdClaimedToInt, noteId);
 
@@ -158,7 +151,6 @@ namespace FundooNotes.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    //Data = null
                 };
                 return StatusCode(500, response); //returning 500 error code as this error
                                                   //can occur only due to server error
@@ -171,14 +163,13 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+                var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdClaimed);
 
                 var result = await _noteBL.TrashNote(userIdClaimedToInt, noteId);
 
                 var response = new FundooResponseModel<string>
                 {
-                    //Message = "Operation performed successfully",                    
                     Message = result ? "Note trashed successfully" : "Note untrashed successfully"
                 };
                 return Ok(response);
@@ -210,14 +201,13 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+                var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdClaimed);
 
                 var result = await _noteBL.ArchiveNote(userIdClaimedToInt, noteId);
 
                 var response = new FundooResponseModel<string>
                 {
-                    //Message = "Operation performed successfully",                    
                     Message = result ? "Note archived successfully" : "Note unarchived successfully"
                 };
                 return Ok(response);
@@ -258,15 +248,14 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
+                var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdClaimed);
 
                 var result = await _noteBL.DeleteNote(userIdClaimedToInt, noteId);
 
                 var response = new FundooResponseModel<string>
                 {
                     Message = "Note deleted permanently",
-                    //Data = result
                 };
                 return Ok(response);
             }

@@ -13,12 +13,10 @@ namespace FundooNotes.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserBL _userBL;
-        private readonly IMailServiceBL _mailServiceBL;
 
-        public UserController(IUserBL userBL, IMailServiceBL mailServiceBL)
+        public UserController(IUserBL userBL)
         {
             _userBL = userBL;
-            _mailServiceBL = mailServiceBL;
         }
 
         [HttpPost]
@@ -43,7 +41,6 @@ namespace FundooNotes.Controllers
                     Message = ex.Message
                 };
                 return BadRequest(response);
-                //return BadRequest(ex.Message);
             }
             catch (UserExistsException ex)
             {
@@ -53,7 +50,6 @@ namespace FundooNotes.Controllers
                     Message = ex.Message
                 };
                 return BadRequest(response);
-                //return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -89,7 +85,6 @@ namespace FundooNotes.Controllers
                     Message = ex.Message
                 };
                 return NotFound(response);
-                //return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -102,75 +97,7 @@ namespace FundooNotes.Controllers
             }
         }
 
-        /*[Authorize]
-        [HttpGet("protected")]
-        public IActionResult ProtectedEndpoint(string expectedUserEmail)
-        {
-            //extracting userId from token's payload
-            var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userEmailClaimed = User.FindFirstValue(ClaimTypes.Email);
-
-            //if userId does not exist return the following
-            if (userIdClaimed == null || userEmailClaimed == null)
-                return Unauthorized("401 : user does not exist");
-
-            //if userId does not match then return the following
-            if (!userEmailClaimed.Equals(expectedUserEmail))
-                return Unauthorized("401 : you are not unauthorized to access this resource");
-
-            // This endpoint can only be accessed with a valid JWT token.
-            else
-                return Ok("Welcome to Fundoo notes");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> SendEmail(string to)
-        {
-            string message = "Hello";
-            string mailSubject = "This is a Subject";
-
-            try
-            {
-                bool isEMailSent = await _mailServiceBL.SendEmail(to, message, mailSubject);
-                if (isEMailSent)
-                {
-                    var response = new FundooResponseModel<string>
-                    {
-                        Message = "Email sent successfully",
-                    };
-                    return Ok(response);
-                }
-                else
-                {
-                    var response = new FundooResponseModel<string>
-                    {
-                        Message = "Failed to send email",
-                    };
-                    return BadRequest(response);
-                }
-            }
-            catch (EmailSendingException ex)
-            {
-                var response = new FundooResponseModel<string>
-                {
-                    Success = false,
-                    Message = ex.Message
-                };
-                return BadRequest(response);
-            }
-            catch (Exception ex)
-            {
-                var response = new FundooResponseModel<string>
-                {
-                    Success = false,
-                    Message = ex.Message
-                };
-                return StatusCode(500, response);
-            }
-
-        }*/
-
-        [HttpPatch]
+        [HttpPost("forgotpassword")]
         public async Task<IActionResult> ForgotPassword(UserEmailDto userEmailDto)
         {
             try
@@ -182,7 +109,6 @@ namespace FundooNotes.Controllers
                 var response = new FundooResponseModel<string>
                 {
                     Message = "Email sent successfully",
-                    //Data = result
                 };
                 return Ok(response);
             }
@@ -217,23 +143,13 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpPatch("resetpassword")]
+        [HttpPost("resetpassword")]
         public async Task<IActionResult> ResetPassword(UserPasswordDto userPasswordDto)
         {
             try
             {
-                //var handler = new JwtSecurityTokenHandler();
-
-                // Convert the token string into a JwtSecurityToken object to access its properties.
-                //var jwtToken = handler.ReadJwtToken(userPasswordDto.Token);
-
-                // Attempt to extract the email claim value.
-                //var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid")?.Value;
-
-                var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
-                //Console.WriteLine(userIdClaimedToInt);
-                //var userEmail = User.FindFirstValue(ClaimTypes.Email);
+                var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userIdClaimedToInt = Convert.ToInt32(userIdClaimed);
 
                 await _userBL.ResetPassword(userPasswordDto.Password, userIdClaimedToInt);
 

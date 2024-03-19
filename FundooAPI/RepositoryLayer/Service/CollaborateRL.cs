@@ -135,8 +135,7 @@ public class CollaborateRL : ICollaborateRL
         parameters.Add("noteId", noteId, DbType.Int32);
         parameters.Add("collaboratorEmail", removeCollaboratorDto.CollaboratorEmail, DbType.String);
 
-        var deleteQuery = "DELETE FROM Collaborators WHERE UserId=@userId AND NoteId=@noteId AND CollaboratorEmail=@collaboratorEmail;";// +
-                                                                                                                                        //"SELECT * FROM Collaborators WHERE CollaborateId = SCOPE_IDENTITY();";
+        var deleteQuery = "DELETE FROM Collaborators WHERE UserId=@userId AND NoteId=@noteId AND CollaboratorEmail=@collaboratorEmail;";
 
         var sameEmailQuery = "SELECT Email FROM Users WHERE UserId=@userId";
 
@@ -158,7 +157,6 @@ public class CollaborateRL : ICollaborateRL
             if (!noteExists)
                 throw new NoteDoesNotExistException("Note Not found with provided note Id");
 
-            //return await connection.QueryFirstOrDefaultAsync<bool>(deleteQuery, parameters);
             int result = await connection.ExecuteAsync(deleteQuery, parameters);
             if (result == 0)
                 throw new DeleteFailException("Provided collaborator email is not collaborated with provided noteId");

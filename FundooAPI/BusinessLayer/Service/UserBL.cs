@@ -7,11 +7,10 @@ namespace BusinessLayer.Service;
 public class UserBL : IUserBL
 {
     private readonly IUserRL _userRL;
-    //private readonly IAuthServiceRL _authService;
-    public UserBL(IUserRL userRL)// IAuthServiceRL authService)
+
+    public UserBL(IUserRL userRL)
     {
         _userRL = userRL;
-        //_authService = authService;
     }
     public Task<bool> RegisterUser(UserRegistrationDto userRegistrationDto)
     {

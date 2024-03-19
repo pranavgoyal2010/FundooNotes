@@ -8,11 +8,9 @@ namespace RepositoryLayer.Service;
 
 public class MailServiceRL : IMailServiceRL
 {
-    //private readonly AppDbContext _appDbContext;
     private readonly EmailDto _emailDto;
     public MailServiceRL(EmailDto emailDto)
     {
-        //_appDbContext = appDbContext;
         _emailDto = emailDto;
     }
 

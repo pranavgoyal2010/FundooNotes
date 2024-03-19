@@ -35,9 +35,9 @@ public class UserRL : IUserRL
         parameters.Add("email", userRegistrationDto.Email, DbType.String);
         parameters.Add("password", hashedPassword, DbType.String);
 
-        var query = "INSERT INTO Users (FirstName, LastName, Email, Password) VALUES" +
-            "(@fName, @lName, @email, @password);" +
-            "SELECT CAST(SCOPE_IDENTITY() as int);";
+        var query = @"INSERT INTO Users (FirstName, LastName, Email, Password)
+                      VALUES (@fName, @lName, @email, @password);
+                      SELECT CAST(SCOPE_IDENTITY() as int);";
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -96,8 +96,6 @@ public class UserRL : IUserRL
 
     public async Task<string> ForgotPassword(string email)
     {
-        //var parameters = new DynamicParameters();
-        //parameters.Add("email", email, DbType.String);
 
         var query = "SELECT * FROM Users WHERE Email = @email";
 
@@ -114,11 +112,6 @@ public class UserRL : IUserRL
             // Generate password reset link
             var url = $"https://localhost:7151/api/user/resetpassword?token={token}";
 
-            //var url = $"https://localhost:7151/api/user/resetpassword";
-
-
-            //var client = new HttpClient();
-            //client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
             // Send password reset email
             await _mailServiceRL.SendEmail(email, "Reset Password", url);
@@ -143,7 +136,6 @@ public class UserRL : IUserRL
                 throw new InvalidCredentialsException("user does not exist");
 
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
-            //user.Password = hashedPassword;
 
             int rowsAffected = await connection.ExecuteAsync(updateQuery, new { hashPassword = hashedPassword, UserId = userId });
 

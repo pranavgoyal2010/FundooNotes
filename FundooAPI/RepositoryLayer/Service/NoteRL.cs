@@ -27,10 +27,10 @@ public class NoteRL : INoteRL
         parameters.Add("isDeleted", 0, DbType.Boolean);
         parameters.Add("userId", userId, DbType.Int32);
 
-        var insertQuery = "INSERT INTO Notes ([Title], Description, Colour, IsArchived, IsDeleted, UserId) VALUES" +
-            "(@title, @description, @colour, @isArchived, @isDeleted, @userId);" +
-            "SELECT * FROM Notes WHERE NoteId = SCOPE_IDENTITY() AND UserId = @userId;";
-        //"SELECT CAST(SCOPE_IDENTITY() as int);";
+        var insertQuery = @"INSERT INTO Notes ([Title], Description, Colour, IsArchived, IsDeleted, UserId) 
+                            VALUES (@title, @description, @colour, @isArchived, @isDeleted, @userId);
+                            SELECT * FROM Notes WHERE NoteId = SCOPE_IDENTITY() AND UserId = @userId;";
+
 
         using (var connection = _appDbContext.CreateConnection())
         {
@@ -50,7 +50,8 @@ public class NoteRL : INoteRL
                         Colour VARCHAR(100),                          
                         IsArchived BIT DEFAULT(0),
                         IsDeleted BIT DEFAULT(0),
-                        UserId INT FOREIGN KEY REFERENCES Users(UserId)
+                        UserId INT,
+                        FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE
                  );");
             }
 
@@ -63,21 +64,8 @@ public class NoteRL : INoteRL
 
     public async Task<IEnumerable<GetNoteDto>> GetAllNotes(int userId)
     {
-        //var query = "SELECT * FROM Notes WHERE UserId=@userId AND IsDeleted=0 AND IsArchived=0";
-        //var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId";
 
         //following query will display all notes including the collaborated notes
-        /*var selectQuery = @"SELECT N.*
-                            FROM Notes N
-                            WHERE N.UserId = @userId                             
-                            UNION ALL
-                            SELECT N.*
-                            FROM Notes N
-                            INNER JOIN Collaborators C ON N.NoteId = C.NoteId
-                            WHERE C.CollaboratorEmail = 
-                                (SELECT Email FROM Users U WHERE U.UserId = @userId);
-                            ";*/
-
         var selectQuery = @"SELECT DISTINCT N.*
                             FROM Notes N
                             LEFT JOIN Collaborators C ON N.NoteId = C.NoteId
@@ -97,8 +85,7 @@ public class NoteRL : INoteRL
 
     public async Task<GetNoteDto> GetNoteById(int userId, int noteId)
     {
-        //var selectQuery = "SELECT * FROM Notes WHERE UserId=@userId AND NoteId=@noteId";
-
+        //query will allow to get a note that is of this userId and the ones this userId has collaboration access to
         var selectQuery = @"SELECT * FROM Notes 
                             WHERE (UserId = @userId OR NoteId IN (
                                 SELECT NoteId 
@@ -127,11 +114,7 @@ public class NoteRL : INoteRL
         parameters.Add("colour", string.IsNullOrEmpty(updateNoteDto.Colour) ? null : updateNoteDto.Colour, DbType.String);
         parameters.Add("userId", userId, DbType.Int32);
 
-        /*var updateQuery = "UPDATE Notes " +
-                    "SET Title=@title, " +
-                    "Description=@description, " +
-                    "Colour=@colour WHERE UserId=@userId AND NoteId=@noteId;";*/
-
+        //query will allow to update a note that is of this userId and the ones this userId has collaboration access to
         var updateQuery = @"
             UPDATE Notes 
             SET Title = @title, 
@@ -149,6 +132,15 @@ public class NoteRL : INoteRL
                 )
         );";
 
+        //query will allow to get a note that is of this userId and the ones this userId has collaboration access to
+        var selectQuery = @"SELECT * FROM Notes 
+                            WHERE (UserId = @userId OR NoteId IN (
+                                SELECT NoteId 
+                                FROM Collaborators 
+                                WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
+                            )) AND NoteId = @noteId;";
+
+
         using (var connection = _appDbContext.CreateConnection())
         {
 
@@ -157,15 +149,7 @@ public class NoteRL : INoteRL
             if (result == 0)
                 throw new UpdateFailException("Update failed please try again due to wrong NoteId");
 
-
-            //var selectQuery = "SELECT * FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
-            var selectQuery = @"SELECT * FROM Notes 
-                            WHERE (UserId = @userId OR NoteId IN (
-                                SELECT NoteId 
-                                FROM Collaborators 
-                                WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
-                            )) AND NoteId = @noteId;";
-
+            //Fetch the updated note
             var updatedNote = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
             return updatedNote;
 
@@ -174,9 +158,7 @@ public class NoteRL : INoteRL
 
     public async Task<bool> TrashNote(int userId, int noteId)
     {
-        //var updateQuery = "UPDATE Notes SET IsDeleted = CASE WHEN IsDeleted = 1 THEN 0 ELSE 1 END " +
-        //    "WHERE NoteId=@noteId AND UserId=@userId;";
-
+        //allow to trash any note including the collaborated ones
         var updateQuery = @"UPDATE Notes 
                             SET IsDeleted = CASE WHEN IsDeleted = 1 THEN 0 ELSE 1 END 
                             WHERE NoteId = @noteId AND (UserId = @userId OR NoteId IN (
@@ -185,8 +167,7 @@ public class NoteRL : INoteRL
                                 WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
                             ));";
 
-        //var selectQuery = "SELECT IsDeleted FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
-
+        //query will allow to get a note that is of this userId and the ones this userId has collaboration access to
         var selectQuery = @"SELECT IsDeleted FROM Notes 
                             WHERE (UserId = @userId OR NoteId IN (
                                 SELECT NoteId 
@@ -212,8 +193,7 @@ public class NoteRL : INoteRL
 
     public async Task<bool> ArchiveNote(int userId, int noteId)
     {
-        //var isDeletedQuery = "SELECT IsDeleted FROM Notes WHERE NoteId=@noteId AND UserId=@userId;";
-
+        //query to check if note is trahsed
         var isDeletedQuery = @"SELECT IsDeleted FROM Notes 
                             WHERE (UserId = @userId OR NoteId IN (
                                 SELECT NoteId 
@@ -221,9 +201,7 @@ public class NoteRL : INoteRL
                                 WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
                             )) AND NoteId = @noteId;";
 
-        //var updateQuery = "UPDATE Notes SET IsArchived = CASE WHEN IsArchived = 1 THEN 0 ELSE 1 END " +
-        //    "WHERE NoteId=@noteId AND UserId=@userId AND IsDeleted=0;";
-
+        //allow to archive any note including the collaborated ones
         var updateQuery = @"UPDATE Notes 
                             SET IsArchived = CASE WHEN IsArchived = 1 THEN 0 ELSE 1 END 
                             WHERE NoteId = @noteId AND (UserId = @userId OR NoteId IN (
@@ -232,8 +210,7 @@ public class NoteRL : INoteRL
                                 WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
                             )) AND IsDeleted=0;";
 
-        //var isArchivedQuery = "SELECT IsArchived FROM Notes WHERE NoteId = @noteId AND UserId = @userId";
-
+        //query to check if note is trahsed
         var isArchivedQuery = @"SELECT IsArchived FROM Notes 
                             WHERE (UserId = @userId OR NoteId IN (
                                 SELECT NoteId 
@@ -252,7 +229,7 @@ public class NoteRL : INoteRL
                 throw new UpdateFailException("Move to archive failed please try again due to wrong NoteId");
 
 
-            // Fetch the updated note            
+            // Fetch if the note is archived or unarchived            
             var isArchivedQueryResult = await connection.QuerySingleOrDefaultAsync<bool>(isArchivedQuery, new { userId, noteId });
             return isArchivedQueryResult;
 
@@ -262,8 +239,7 @@ public class NoteRL : INoteRL
 
     public async Task<bool> DeleteNote(int userId, int noteId)
     {
-        //var deleteQuery = "DELETE FROM Notes WHERE NoteId=@noteId AND UserId=@userId";
-
+        //query to delete any note included the collaborated ones.
         var deleteQuery = @"DELETE FROM Notes 
                             WHERE NoteId = @noteId AND (UserId = @userId OR NoteId IN (
                                 SELECT NoteId 
