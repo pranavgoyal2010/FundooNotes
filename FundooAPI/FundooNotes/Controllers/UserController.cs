@@ -170,12 +170,12 @@ namespace FundooNotes.Controllers
 
         }*/
 
-        [HttpPatch("{email}")]
-        public async Task<IActionResult> ForgotPassword(string email)
+        [HttpPatch]
+        public async Task<IActionResult> ForgotPassword(UserEmailDto userEmailDto)
         {
             try
             {
-                string result = await _userBL.ForgotPassword(email);
+                string result = await _userBL.ForgotPassword(userEmailDto.Email);
                 var response = new FundooResponseModel<string>
                 {
                     Message = "Email sent successfully",
@@ -214,15 +214,22 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpPatch("resetpassword/{token}")]
-        public async Task<IActionResult> ResetPassword(string token, UserPasswordDto userPasswordDto)
+        [HttpPatch("resetpassword")]
+        public async Task<IActionResult> ResetPassword(UserPasswordDto userPasswordDto)
         {
             try
             {
+                //var handler = new JwtSecurityTokenHandler();
+
+                // Convert the token string into a JwtSecurityToken object to access its properties.
+                //var jwtToken = handler.ReadJwtToken(userPasswordDto.Token);
+
+                // Attempt to extract the email claim value.
+                //var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid")?.Value;
 
                 var userIdCliamed = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 int userIdClaimedToInt = Convert.ToInt32(userIdCliamed);
-
+                //Console.WriteLine(userIdClaimedToInt);
                 //var userEmail = User.FindFirstValue(ClaimTypes.Email);
 
                 await _userBL.ResetPassword(userPasswordDto.Password, userIdClaimedToInt);

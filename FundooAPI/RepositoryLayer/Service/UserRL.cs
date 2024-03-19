@@ -112,7 +112,9 @@ public class UserRL : IUserRL
             string token = _authServiceRL.GenerateJwtToken(user);
 
             // Generate password reset link
-            var url = $"https://localhost:7151/api/user/resetpassword?token={token}";
+            //var url = $"https://localhost:7151/api/user/resetpassword?token={token}";
+
+            var url = $"https://localhost:7151/api/user/resetpassword";
 
             // Send password reset email
             await _mailServiceRL.SendEmail(email, "Reset Password", url);
@@ -131,7 +133,7 @@ public class UserRL : IUserRL
 
         using (var connection = _appDbContext.CreateConnection())
         {
-            var user = await connection.QueryFirstOrDefaultAsync<UserEntity>(selectQuery, new { userId });
+            var user = await connection.QueryFirstOrDefaultAsync<UserEntity>(selectQuery, new { UserId = userId });
 
             if (user == null)
                 throw new InvalidCredentialsException("user does not exist");
@@ -139,7 +141,7 @@ public class UserRL : IUserRL
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
             //user.Password = hashedPassword;
 
-            int rowsAffected = await connection.ExecuteAsync(updateQuery, new { hashedPassword, userId });
+            int rowsAffected = await connection.ExecuteAsync(updateQuery, new { hashPassword = hashedPassword, UserId = userId });
 
             if (rowsAffected == 0)
                 throw new UpdateFailException("password reset failed.");
