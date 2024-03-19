@@ -96,30 +96,46 @@ public class UserRL : IUserRL
 
     public async Task<string> ForgotPassword(string email)
     {
-
         var query = "SELECT * FROM Users WHERE Email = @email";
-
 
         using (var connection = _appDbContext.CreateConnection())
         {
             var user = await connection.QueryFirstOrDefaultAsync<UserEntity>(query, new { email });
 
             if (user == null)
-                throw new InvalidCredentialsException("user does not exist");
+                throw new InvalidCredentialsException("User does not exist");
 
             string token = _authServiceRL.GenerateJwtToken(user);
 
             // Generate password reset link
             var url = $"https://localhost:7151/api/user/resetpassword?token={token}";
 
+            // HTML body for the email
+            var htmlBody = @"
+            <!DOCTYPE html>
+            <html lang='en'>
+            <head>
+                <meta charset='UTF-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                <title>Password Reset</title>
+            </head>
+            <body>
+                <h1>Password Reset</h1>
+                <p>Hello,</p>
+                <p>You've requested to reset your password. Please click the link below to proceed:</p>
+                <a href='" + url + "'>Reset Password</a>" + @"
+                <p>If you didn't request this, you can ignore this email.</p>
+                <p>Best regards,<br>Your Application Team</p>
+            </body>
+            </html>";
 
             // Send password reset email
-            await _mailServiceRL.SendEmail(email, "Reset Password", url);
+            await _mailServiceRL.SendEmail(email, "Reset Password", htmlBody);
 
             return token;
-
         }
     }
+
 
     public async Task<bool> ResetPassword(string newPassword, int userId)
     {
