@@ -3,27 +3,7 @@
   "WorkspaceRootPath": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\fundoonotes\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{364B5DE4-BFF6-4E9A-A84E-E02EBEA6B515}|..\\RepositoryLayer\\RepositoryLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\repositorylayer\\service\\userrl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{364B5DE4-BFF6-4E9A-A84E-E02EBEA6B515}|..\\RepositoryLayer\\RepositoryLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\repositorylayer\\service\\mailservicerl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{77722473-B091-487E-8370-3D0B6AF47352}|..\\ModelLayer\\ModelLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\modellayer\\dto\\userpassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\fundoonotes\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\prana\\Desktop\\SQLQuery1.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__ProjectModels/FundooDB/True/SqlTable/dbo.Users.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__ProjectModels/FundooDB/True/SqlTable/dbo.Collaborators.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__ProjectModels/FundooDB/True/SqlTable/dbo.Notes.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
@@ -33,10 +13,44 @@
       "RelativeMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|solutionrelative:controllers\\collaboratecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{364B5DE4-BFF6-4E9A-A84E-E02EBEA6B515}|..\\RepositoryLayer\\RepositoryLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\repositorylayer\\interface\\iuserrl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\fundoonotes\\controllers\\notecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|solutionrelative:controllers\\notecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EA0C62EA-9B61-4BDF-BB31-D1F174F65004}|..\\BusinessLayer\\BusinessLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\businesslayer\\service\\userbl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EA0C62EA-9B61-4BDF-BB31-D1F174F65004}|..\\BusinessLayer\\BusinessLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\businesslayer\\interface\\inotebl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EA0C62EA-9B61-4BDF-BB31-D1F174F65004}|..\\BusinessLayer\\BusinessLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\businesslayer\\service\\notebl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{364B5DE4-BFF6-4E9A-A84E-E02EBEA6B515}|..\\RepositoryLayer\\RepositoryLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\repositorylayer\\interface\\inoterl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{364B5DE4-BFF6-4E9A-A84E-E02EBEA6B515}|..\\RepositoryLayer\\RepositoryLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\repositorylayer\\service\\noterl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\fundoonotes\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\fundoonotes\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\fundoonotes\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A2C6C64-EB4F-4CD3-A821-200D634FEF62}|FundooNotes.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{77722473-B091-487E-8370-3D0B6AF47352}|..\\ModelLayer\\ModelLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\modellayer\\dto\\userpassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{364B5DE4-BFF6-4E9A-A84E-E02EBEA6B515}|..\\RepositoryLayer\\RepositoryLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\repositorylayer\\service\\userrl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\prana\\Desktop\\SQLQuery1.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{364B5DE4-BFF6-4E9A-A84E-E02EBEA6B515}|..\\RepositoryLayer\\RepositoryLayer.csproj|c:\\users\\prana\\desktop\\bridgelabz\\fundooapi\\fundooapi\\repositorylayer\\interface\\iuserrl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,23 +60,134 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MailServiceRL.cs",
-              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\RepositoryLayer\\Service\\MailServiceRL.cs",
-              "RelativeDocumentMoniker": "..\\RepositoryLayer\\Service\\MailServiceRL.cs",
-              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\RepositoryLayer\\Service\\MailServiceRL.cs",
-              "RelativeToolTip": "..\\RepositoryLayer\\Service\\MailServiceRL.cs",
-              "ViewState": "AQIAABIAAAAAAAAAAAAYwA4AAAAFAAAA",
+              "DocumentIndex": 4,
+              "Title": "INoteBL.cs",
+              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\BusinessLayer\\Interface\\INoteBL.cs",
+              "RelativeDocumentMoniker": "..\\BusinessLayer\\Interface\\INoteBL.cs",
+              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\BusinessLayer\\Interface\\INoteBL.cs",
+              "RelativeToolTip": "..\\BusinessLayer\\Interface\\INoteBL.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAABAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-19T12:36:58.732Z"
+              "WhenOpened": "2024-03-24T06:59:37.304Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
+              "Title": "NoteBL.cs",
+              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\BusinessLayer\\Service\\NoteBL.cs",
+              "RelativeDocumentMoniker": "..\\BusinessLayer\\Service\\NoteBL.cs",
+              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\BusinessLayer\\Service\\NoteBL.cs",
+              "RelativeToolTip": "..\\BusinessLayer\\Service\\NoteBL.cs",
+              "ViewState": "AQIAAB4AAAAAAAAAAAA7wCgAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T06:59:21.048Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "INoteRL.cs",
+              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\RepositoryLayer\\Interface\\INoteRL.cs",
+              "RelativeDocumentMoniker": "..\\RepositoryLayer\\Interface\\INoteRL.cs",
+              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\RepositoryLayer\\Interface\\INoteRL.cs",
+              "RelativeToolTip": "..\\RepositoryLayer\\Interface\\INoteRL.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T06:59:02.578Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "dbo.Notes [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__ProjectModels/FundooDB/True/SqlTable/dbo.Notes.sql",
+              "ToolTip": "dbo.Notes [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2024-03-22T12:30:54.356Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "dbo.Collaborators [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__ProjectModels/FundooDB/True/SqlTable/dbo.Collaborators.sql",
+              "ToolTip": "dbo.Collaborators [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2024-03-24T06:15:53.428Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "NoteController.cs",
+              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Controllers\\NoteController.cs",
+              "RelativeDocumentMoniker": "Controllers\\NoteController.cs",
+              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Controllers\\NoteController.cs",
+              "RelativeToolTip": "Controllers\\NoteController.cs",
+              "ViewState": "AQIAAB4AAAAAAAAAAAA1wCQBAABkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-21T06:13:23.078Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "NoteRL.cs",
+              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\RepositoryLayer\\Service\\NoteRL.cs",
+              "RelativeDocumentMoniker": "..\\RepositoryLayer\\Service\\NoteRL.cs",
+              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\RepositoryLayer\\Service\\NoteRL.cs",
+              "RelativeToolTip": "..\\RepositoryLayer\\Service\\NoteRL.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAOwAAABZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-20T12:18:34.693Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CollaborateController.cs",
+              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Controllers\\CollaborateController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CollaborateController.cs",
+              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Controllers\\CollaborateController.cs",
+              "RelativeToolTip": "Controllers\\CollaborateController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAADQAAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-19T11:01:59.88Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-03-21T07:02:31.86Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AQIAABsAAAAAAAAAAAAUwDkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-20T11:44:18.309Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "SQLQuery1.sql",
               "DocumentMoniker": "C:\\Users\\prana\\Desktop\\SQLQuery1.sql",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\SQLQuery1.sql",
@@ -73,62 +198,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "dbo.Users [Data]",
-              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__ProjectModels/FundooDB/True/SqlTable/dbo.Users.sql",
-              "ToolTip": "dbo.Users [Data]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
-              "WhenOpened": "2024-03-19T11:07:07.056Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "CollaborateController.cs",
-              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Controllers\\CollaborateController.cs",
-              "RelativeDocumentMoniker": "Controllers\\CollaborateController.cs",
-              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Controllers\\CollaborateController.cs",
-              "RelativeToolTip": "Controllers\\CollaborateController.cs",
-              "ViewState": "AQIAAJMAAAAAAAAAAAAowDkAAAAeAAAA",
+              "DocumentIndex": 9,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "Controllers\\UserController.cs",
+              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Controllers\\UserController.cs",
+              "RelativeToolTip": "Controllers\\UserController.cs",
+              "ViewState": "AQIAAIsAAAAAAAAAAAAkwAcAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-19T11:01:59.88Z"
+              "WhenOpened": "2024-03-18T10:35:56.787Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "UserBL.cs",
-              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\BusinessLayer\\Service\\UserBL.cs",
-              "RelativeDocumentMoniker": "..\\BusinessLayer\\Service\\UserBL.cs",
-              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\BusinessLayer\\Service\\UserBL.cs",
-              "RelativeToolTip": "..\\BusinessLayer\\Service\\UserBL.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-19T11:01:51.822Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 12,
               "Title": "UserRL.cs",
               "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\RepositoryLayer\\Service\\UserRL.cs",
               "RelativeDocumentMoniker": "..\\RepositoryLayer\\Service\\UserRL.cs",
               "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\RepositoryLayer\\Service\\UserRL.cs",
               "RelativeToolTip": "..\\RepositoryLayer\\Service\\UserRL.cs",
-              "ViewState": "AQIAAGkAAAAAAAAAAAAcwGoAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-19T10:51:11.497Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-20T12:18:45.511Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "dbo.Notes [Data]",
-              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__ProjectModels/FundooDB/True/SqlTable/dbo.Notes.sql",
-              "ToolTip": "dbo.Notes [Data]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
-              "WhenOpened": "2024-03-19T09:27:59.348Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 11,
               "Title": "UserPasswordDto.cs",
               "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\ModelLayer\\Dto\\UserPasswordDto.cs",
               "RelativeDocumentMoniker": "..\\ModelLayer\\Dto\\UserPasswordDto.cs",
@@ -140,20 +234,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\appsettings.json",
-              "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\appsettings.json",
-              "RelativeToolTip": "appsettings.json",
-              "ViewState": "AQIAAAQAAAAAAAAAAAAAABMAAAAVAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-03-18T13:34:14.291Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 14,
               "Title": "IUserRL.cs",
               "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\RepositoryLayer\\Interface\\IUserRL.cs",
               "RelativeDocumentMoniker": "..\\RepositoryLayer\\Interface\\IUserRL.cs",
@@ -162,18 +243,6 @@
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAWAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-18T11:28:16.309Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "UserController.cs",
-              "DocumentMoniker": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Controllers\\UserController.cs",
-              "RelativeDocumentMoniker": "Controllers\\UserController.cs",
-              "ToolTip": "C:\\Users\\prana\\Desktop\\BridgeLabz\\FundooAPI\\FundooAPI\\FundooNotes\\Controllers\\UserController.cs",
-              "RelativeToolTip": "Controllers\\UserController.cs",
-              "ViewState": "AQIAAL0AAAAAAAAAAAAowAcAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-18T10:35:56.787Z"
             }
           ]
         }

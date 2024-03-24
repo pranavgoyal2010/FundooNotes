@@ -79,12 +79,14 @@ public class NoteRL : INoteRL
 
             var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, new { userId });
 
-            return allNotes.Reverse().ToList();
+            //return allNotes.Reverse().ToList();
+            return allNotes.ToList();
         }
     }
 
     public async Task<GetNoteDto> GetNoteById(int userId, int noteId)
     {
+
         //query will allow to get a note that is of this userId and the ones this userId has collaboration access to
         var selectQuery = @"SELECT * FROM Notes 
                             WHERE (UserId = @userId OR NoteId IN (
@@ -99,7 +101,9 @@ public class NoteRL : INoteRL
             var note = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
 
             if (note != null)
+            {
                 return note;
+            }
             else
                 throw new NoteDoesNotExistException("Note does not exist due to wrong noteId");
         }
@@ -156,7 +160,7 @@ public class NoteRL : INoteRL
         }
     }
 
-    public async Task<bool> TrashNote(int userId, int noteId)
+    public async Task<GetNoteDto> TrashNote(int userId, int noteId)
     {
         //allow to trash any note including the collaborated ones
         var updateQuery = @"UPDATE Notes 
@@ -168,7 +172,7 @@ public class NoteRL : INoteRL
                             ));";
 
         //query will allow to get a note that is of this userId and the ones this userId has collaboration access to
-        var selectQuery = @"SELECT IsDeleted FROM Notes 
+        var selectQuery = @"SELECT * FROM Notes 
                             WHERE (UserId = @userId OR NoteId IN (
                                 SELECT NoteId 
                                 FROM Collaborators 
@@ -184,14 +188,14 @@ public class NoteRL : INoteRL
 
 
             // Fetch the updated note            
-            var selectQueryResult = await connection.QuerySingleOrDefaultAsync<bool>(selectQuery, new { userId, noteId });
+            var selectQueryResult = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
             return selectQueryResult;
 
         }
 
     }
 
-    public async Task<bool> ArchiveNote(int userId, int noteId)
+    public async Task<GetNoteDto> ArchiveNote(int userId, int noteId)
     {
         //query to check if note is trahsed
         var isDeletedQuery = @"SELECT IsDeleted FROM Notes 
@@ -210,8 +214,8 @@ public class NoteRL : INoteRL
                                 WHERE CollaboratorEmail = (SELECT Email FROM Users WHERE UserId=@userId)
                             )) AND IsDeleted=0;";
 
-        //query to check if note is trahsed
-        var isArchivedQuery = @"SELECT IsArchived FROM Notes 
+        //query to return the updated note
+        var selectQuery = @"SELECT * FROM Notes 
                             WHERE (UserId = @userId OR NoteId IN (
                                 SELECT NoteId 
                                 FROM Collaborators 
@@ -229,9 +233,9 @@ public class NoteRL : INoteRL
                 throw new UpdateFailException("Move to archive failed please try again due to wrong NoteId");
 
 
-            // Fetch if the note is archived or unarchived            
-            var isArchivedQueryResult = await connection.QuerySingleOrDefaultAsync<bool>(isArchivedQuery, new { userId, noteId });
-            return isArchivedQueryResult;
+            // Fetch the updated note
+            var selectQueryResult = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
+            return selectQueryResult;
 
         }
 

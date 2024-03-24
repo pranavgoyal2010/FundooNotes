@@ -50,7 +50,7 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpGet("{noteId}")]
+        [HttpGet("getallcollabsbyid")]
         public async Task<IActionResult> GetAllCollaboratorsById(int noteId)
         {
             try
@@ -80,7 +80,7 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpPost("{noteId}")]
+        [HttpPost]
         public async Task<IActionResult> AddCollaborate(int noteId, AddCollaboratorDto addCollaboratorDto)
         {
             try
@@ -131,7 +131,7 @@ namespace FundooNotes.Controllers
 
 
         [Authorize]
-        [HttpDelete("{noteId}")]
+        [HttpDelete]
         public async Task<IActionResult> RemoveCollaborate(int noteId, RemoveCollaboratorDto removeCollaboratorDto)
         {
             try

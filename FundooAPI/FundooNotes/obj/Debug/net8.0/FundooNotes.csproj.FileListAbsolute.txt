@@ -153,3 +153,10 @@ C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\BouncyCastle.Crypto.dll
 C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\System.Net.Mail.Abstractions.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\Microsoft.Extensions.Caching.StackExchangeRedis.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\StackExchange.Redis.dll
+C:\Users\prana\Desktop\BridgeLabz\FundooAPI\FundooAPI\FundooNotes\bin\Debug\net8.0\StackExchange.Redis.Extensions.Core.dll

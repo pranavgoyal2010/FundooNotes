@@ -8,7 +8,9 @@ using ModelLayer.Dto;
 using RepositoryLayer.Context;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Service;
+using StackExchange.Redis;
 using System.Text;
+
 
 // Create a new WebApplication builder
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +36,26 @@ builder.Services.AddScoped<IMailServiceRL, MailServiceRL>();
 
 // Change the injection to use IOptions<EmailSettings>
 builder.Services.AddScoped(sp => sp.GetRequiredService<IOptions<EmailDto>>().Value);
+
+
+/*builder.Services.AddSingleton<IDistributedCache>(sp =>
+{
+    var redisConfiguration = builder.Configuration.GetSection("Redis")["ConnectionString"];
+    return new CacheService(redisConfiguration);
+});*/
+
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var redisConfiguration = builder.Configuration.GetSection("Redis")["ConnectionString"];
+    return ConnectionMultiplexer.Connect(redisConfiguration);
+});
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetSection("Redis")["ConnectionString"];
+});
+
 
 // Configure JWT authentication
 
