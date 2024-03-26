@@ -18,13 +18,11 @@ public class NoteController : ControllerBase
 
     private readonly INoteBL _noteBL;
     private readonly IDatabase _cache;
-    //private readonly IProducer<string, string> _producer; // Kafka producer
 
-    public NoteController(INoteBL noteBL, IConnectionMultiplexer redis) //IProducer<string, string> producer)
+    public NoteController(INoteBL noteBL, IConnectionMultiplexer redis)
     {
         _noteBL = noteBL;
         _cache = redis.GetDatabase();
-        //_producer = producer;
     }
 
 
@@ -40,16 +38,6 @@ public class NoteController : ControllerBase
             var cacheKey = $"UserNotes:{userId}";
 
             var newNote = await _noteBL.CreateNote(createNoteDto, userId);
-
-            // Produce message to Kafka topic for note creation
-            /*var message = new
-            {
-                UserId = userId,
-                Action = "Create",
-                Note = newNote
-            };
-            await ProduceMessageAsync("note-topic", Serialize(message));*/
-
 
             await _cache.HashSetAsync(cacheKey, $"Note:{newNote.NoteId}", Serialize(newNote));
             await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
@@ -425,19 +413,4 @@ public class NoteController : ControllerBase
         return keys.Select(key => (string)key);
     }
 
-    // Helper method to produce message to Kafka topic
-    /*private async Task ProduceMessageAsync(string topic, string message)
-    {
-        try
-        {
-            var deliveryReport = await _producer.ProduceAsync(topic, new Message<string, string> { Key = Guid.NewGuid().ToString(), Value = message });
-
-            // Log delivery report if needed
-            Console.WriteLine($"Delivered message to {deliveryReport.TopicPartitionOffset}");
-        }
-        catch (ProduceException<string, string> e)
-        {
-            Console.WriteLine($"Delivery failed: {e.Error.Reason}");
-        }
-    }*/
 }

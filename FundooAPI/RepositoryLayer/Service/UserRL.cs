@@ -84,9 +84,10 @@ public class UserRL : IUserRL
 
             // Produce user registration event to Kafka topic            
             await _producer.ProduceAsync("user-registration-topic", new Message<string, string> { Value = JsonConvert.SerializeObject(userEventData) });
-
+            //send kafka produce success message on console terminal
             Console.WriteLine($"Sent user registration event: {userEventData.FirstName} {userEventData.LastName}, {userEventData.Email}");
-            /*_consumer.Subscribe("user-registration-topic");
+
+            _consumer.Subscribe("user-registration-topic");
 
             // Handle incoming messages
             var cancellationTokenSource = new CancellationTokenSource();
@@ -123,15 +124,15 @@ public class UserRL : IUserRL
                         // Send registration email
                         await _mailServiceRL.SendEmail(userEventData.Email, "Registration Successful", htmlBody);
 
-                        //send success message on console terminal
-                        Console.WriteLine($"Email sent for user registration: {userEventData.Email}");
+                        //send kafka consume success message on console terminal
+                        Console.WriteLine($"Received and Email sent for user registration: {userEventData.Email}");
                     }
                     catch (ConsumeException e)
                     {
                         Console.WriteLine($"Error occurred while consuming Kafka message: {e.Error.Reason}");
                     }
                 }
-            });*/
+            });
 
             return result;
         }
