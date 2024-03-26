@@ -85,7 +85,8 @@ public class UserRL : IUserRL
             // Produce user registration event to Kafka topic            
             await _producer.ProduceAsync("user-registration-topic", new Message<string, string> { Value = JsonConvert.SerializeObject(userEventData) });
 
-            _consumer.Subscribe("user-registration-topic");
+            Console.WriteLine($"Sent user registration event: {userEventData.FirstName} {userEventData.LastName}, {userEventData.Email}");
+            /*_consumer.Subscribe("user-registration-topic");
 
             // Handle incoming messages
             var cancellationTokenSource = new CancellationTokenSource();
@@ -130,7 +131,7 @@ public class UserRL : IUserRL
                         Console.WriteLine($"Error occurred while consuming Kafka message: {e.Error.Reason}");
                     }
                 }
-            });
+            });*/
 
             return result;
         }
