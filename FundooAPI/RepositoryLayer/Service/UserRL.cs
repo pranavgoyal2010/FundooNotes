@@ -1,5 +1,7 @@
-﻿using Dapper;
+﻿using Confluent.Kafka;
+using Dapper;
 using ModelLayer.Dto;
+using Newtonsoft.Json;
 using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Entity;
@@ -14,11 +16,15 @@ public class UserRL : IUserRL
     private readonly AppDbContext _appDbContext;
     private readonly IAuthServiceRL _authServiceRL;
     private readonly IMailServiceRL _mailServiceRL;
-    public UserRL(AppDbContext appDbContext, IAuthServiceRL authServiceRL, IMailServiceRL mailServiceRL)
+    private readonly IProducer<string, string> _producer; // Kafka producer
+    private readonly IConsumer<string, string> _consumer; // Kafka consumer
+    public UserRL(AppDbContext appDbContext, IAuthServiceRL authServiceRL, IMailServiceRL mailServiceRL, IProducer<string, string> producer, IConsumer<string, string> consumer)
     {
         _appDbContext = appDbContext;
         _authServiceRL = authServiceRL;
         _mailServiceRL = mailServiceRL;
+        _producer = producer;
+        _consumer = consumer;
     }
 
     public async Task<bool> RegisterUser(UserRegistrationDto userRegistrationDto)
@@ -62,7 +68,71 @@ public class UserRL : IUserRL
             if (userExists > 0)
                 throw new UserExistsException("User already exists");
 
-            return await connection.QuerySingleAsync<bool>(query, parameters);
+            bool result = await connection.QuerySingleAsync<bool>(query, parameters);
+
+            if (!result)
+                throw new Exception("Error occurred while inserting data in db");
+
+
+
+            var userEventData = new
+            {
+                FirstName = userRegistrationDto.FirstName,
+                LastName = userRegistrationDto.LastName,
+                Email = userRegistrationDto.Email
+            };
+
+            // Produce user registration event to Kafka topic            
+            await _producer.ProduceAsync("user-registration-topic", new Message<string, string> { Value = JsonConvert.SerializeObject(userEventData) });
+
+            _consumer.Subscribe("user-registration-topic");
+
+            // Handle incoming messages
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+
+            _ = Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    try
+                    {
+                        var message = _consumer.Consume(cancellationToken);
+
+                        // Extract user registration data from Kafka message
+                        var userEventData = JsonConvert.DeserializeObject<UserRegistrationDto>(message.Value);
+
+                        // Send email using user registration data                        
+                        var htmlBody = @"
+                            <!DOCTYPE html>
+                            <html lang='en'>
+                            <head>
+                                <meta charset='UTF-8'>
+                                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                                <title>Registration Successful</title>
+                            </head>
+                            <body>
+                                <h1>Registration Successful</h1>
+                                <p>Hello, " + userEventData.FirstName + "</p>"
+                             + "<p>Your registration was successful. You can now login to your account.</p>"
+                             + "<p>Best regards,<br>Your Application Team</p>"
+                         + "</body>"
+                         + "</html>";
+
+                        // Send registration email
+                        await _mailServiceRL.SendEmail(userEventData.Email, "Registration Successful", htmlBody);
+
+                        //send success message on console terminal
+                        Console.WriteLine($"Email sent for user registration: {userEventData.Email}");
+                    }
+                    catch (ConsumeException e)
+                    {
+                        Console.WriteLine($"Error occurred while consuming Kafka message: {e.Error.Reason}");
+                    }
+                }
+            });
+
+            return result;
         }
 
     }
@@ -168,4 +238,5 @@ public class UserRL : IUserRL
         string pattern = @"^[a-zA-Z]([\w]*|\.[\w]+)*\@[a-zA-Z0-9]+\.[a-z]{2,}$";
         return Regex.IsMatch(input, pattern);
     }
+
 }

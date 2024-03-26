@@ -1,5 +1,6 @@
 using BusinessLayer.Interface;
 using BusinessLayer.Service;
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -34,15 +35,8 @@ builder.Services.AddScoped<IMailServiceBL, MailServiceBL>();
 builder.Services.Configure<EmailDto>(builder.Configuration.GetSection("EmailDto"));
 builder.Services.AddScoped<IMailServiceRL, MailServiceRL>();
 
-// Change the injection to use IOptions<EmailSettings>
+// Change the injection to use IOptions<EmailDto>
 builder.Services.AddScoped(sp => sp.GetRequiredService<IOptions<EmailDto>>().Value);
-
-
-/*builder.Services.AddSingleton<IDistributedCache>(sp =>
-{
-    var redisConfiguration = builder.Configuration.GetSection("Redis")["ConnectionString"];
-    return new CacheService(redisConfiguration);
-});*/
 
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -55,6 +49,51 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetSection("Redis")["ConnectionString"];
 });
+
+
+// Register Kafka producer config
+builder.Services.AddSingleton<ProducerConfig>(sp =>
+{
+    // Configure Kafka producer properties
+    return new ProducerConfig
+    {
+        BootstrapServers = "localhost:9092", // Kafka broker address
+        ClientId = "my-producer" // Client ID for the producer
+    };
+});
+
+// Register Kafka consumer config
+builder.Services.AddSingleton<ConsumerConfig>(sp =>
+{
+    // Configure Kafka consumer properties
+    return new ConsumerConfig
+    {
+        BootstrapServers = "localhost:9092", // Kafka broker address
+        GroupId = "my-consumer-group", // Consumer group ID
+        AutoOffsetReset = AutoOffsetReset.Earliest // Reset offset to beginning
+    };
+});
+
+// Register Kafka producer
+builder.Services.AddSingleton(sp =>
+{
+    // Retrieve the registered ProducerConfig service
+    var producerConfig = sp.GetRequiredService<ProducerConfig>();
+
+    // Build the producer using the retrieved config
+    return new ProducerBuilder<string, string>(producerConfig).Build();
+});
+
+// Register Kafka consumer
+builder.Services.AddSingleton(sp =>
+{
+    // Retrieve the registered ConsumerConfig service
+    var consumerConfig = sp.GetRequiredService<ConsumerConfig>();
+
+    // Build the consumer using the retrieved config
+    return new ConsumerBuilder<string, string>(consumerConfig).Build();
+});
+
 
 
 // Configure JWT authentication
@@ -148,6 +187,11 @@ builder.Services.AddSwaggerGen(c =>
 
 // Build the application
 var app = builder.Build();
+
+// Set up Kafka producer and consumer
+var producer = new ProducerBuilder<string, string>(app.Services.GetRequiredService<ProducerConfig>()).Build();
+var consumer = new ConsumerBuilder<string, string>(app.Services.GetRequiredService<ConsumerConfig>()).Build();
+
 
 // Configure the HTTP request pipeline
 

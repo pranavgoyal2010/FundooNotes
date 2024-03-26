@@ -18,11 +18,13 @@ public class NoteController : ControllerBase
 
     private readonly INoteBL _noteBL;
     private readonly IDatabase _cache;
+    //private readonly IProducer<string, string> _producer; // Kafka producer
 
-    public NoteController(INoteBL noteBL, IConnectionMultiplexer redis)
+    public NoteController(INoteBL noteBL, IConnectionMultiplexer redis) //IProducer<string, string> producer)
     {
         _noteBL = noteBL;
         _cache = redis.GetDatabase();
+        //_producer = producer;
     }
 
 
@@ -38,6 +40,16 @@ public class NoteController : ControllerBase
             var cacheKey = $"UserNotes:{userId}";
 
             var newNote = await _noteBL.CreateNote(createNoteDto, userId);
+
+            // Produce message to Kafka topic for note creation
+            /*var message = new
+            {
+                UserId = userId,
+                Action = "Create",
+                Note = newNote
+            };
+            await ProduceMessageAsync("note-topic", Serialize(message));*/
+
 
             await _cache.HashSetAsync(cacheKey, $"Note:{newNote.NoteId}", Serialize(newNote));
             await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
@@ -189,10 +201,10 @@ public class NoteController : ControllerBase
             var updatedNote = await _noteBL.UpdateNote(updateNoteDto, userId, noteId);
 
 
-            var cacheKeyPrefix = $"UserNotes:"; // Key for user's notes            
+            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache            
             var noteField = $"Note:{noteId}"; // Field for the specific note
 
-            // Get all user cache keys containing the note
+            // Get all user cache keys
             var cacheKeys = (await GetAllCacheKeysAsync()).Where(k => k.StartsWith(cacheKeyPrefix));
 
             // Update the note in each user's cache
@@ -201,11 +213,6 @@ public class NoteController : ControllerBase
                 await _cache.HashSetAsync(cacheKey, noteField, Serialize(updatedNote));
                 await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
             }
-
-
-            // Cache the updated note                        
-            //await _cache.HashSetAsync(cacheKey, noteField, Serialize(updatedNote));
-            //await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
 
             var response = new FundooResponseModel<GetNoteDto>
             {
@@ -247,17 +254,7 @@ public class NoteController : ControllerBase
             // Perform the update operation in the database
             var updatedNote = await _noteBL.TrashNote(userId, noteId);
 
-            // Update the cached notes
-            //var cacheKey = $"UserNotes:{userId}"; // Key for user's notes            
-            //var noteField = $"Note:{noteId}"; // Field for the specific note
-
-
-            // Cache the updated note 
-            //await _cache.HashSetAsync(cacheKey, noteField, Serialize(updatedNote));
-            //await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
-
-
-            var cacheKeyPrefix = $"UserNotes:"; // Key for user's notes            
+            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
             var noteField = $"Note:{noteId}"; // Field for the specific note
 
             // Get all user cache keys containing the note
@@ -308,16 +305,7 @@ public class NoteController : ControllerBase
             // Perform the update operation in the database
             var updatedNote = await _noteBL.ArchiveNote(userId, noteId);
 
-
-            //var cacheKey = $"UserNotes:{userId}"; // Key for user's notes            
-            //var noteField = $"Note:{noteId}"; // Field for the specific note
-
-
-            // Cache the updated note
-            //await _cache.HashSetAsync(cacheKey, noteField, Serialize(updatedNote));
-            //await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
-
-            var cacheKeyPrefix = $"UserNotes:"; // Key for user's notes            
+            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
             var noteField = $"Note:{noteId}"; // Field for the specific note
 
             // Get all user cache keys containing the note
@@ -377,13 +365,7 @@ public class NoteController : ControllerBase
             // Perform the delete operation in the database
             await _noteBL.DeleteNote(userId, noteId);
 
-            //var cacheKey = $"UserNotes:{userId}"; // Key for user's notes            
-            //var noteField = $"Note:{noteId}"; // Field for the specific note
-
-            // Remove the note from the cache
-            //await _cache.HashDeleteAsync(cacheKey, noteField);
-
-            var cacheKeyPrefix = $"UserNotes:"; // Key for user's notes            
+            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
             var noteField = $"Note:{noteId}"; // Field for the specific note
 
             // Get all user cache keys containing the note
@@ -421,7 +403,8 @@ public class NoteController : ControllerBase
         }
     }
 
-    //methods to serialize and deserialize objects to/from JSON
+    //methods to serialize and deserialize objects to/from JSON string
+    //converts obj
     private T Deserialize<T>(string value)
     {
         return JsonConvert.DeserializeObject<T>(value);
@@ -441,4 +424,20 @@ public class NoteController : ControllerBase
 
         return keys.Select(key => (string)key);
     }
+
+    // Helper method to produce message to Kafka topic
+    /*private async Task ProduceMessageAsync(string topic, string message)
+    {
+        try
+        {
+            var deliveryReport = await _producer.ProduceAsync(topic, new Message<string, string> { Key = Guid.NewGuid().ToString(), Value = message });
+
+            // Log delivery report if needed
+            Console.WriteLine($"Delivered message to {deliveryReport.TopicPartitionOffset}");
+        }
+        catch (ProduceException<string, string> e)
+        {
+            Console.WriteLine($"Delivery failed: {e.Error.Reason}");
+        }
+    }*/
 }

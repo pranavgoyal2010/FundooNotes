@@ -56,6 +56,14 @@
               "target": "Package",
               "version": "[0.1.0, )"
             },
+            "Confluent.Kafka": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
+            "Confluent.SchemaRegistry": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
             "Dapper": {
               "target": "Package",
               "version": "[2.1.35, )"
@@ -161,6 +169,14 @@
             "BCrypt.Net": {
               "target": "Package",
               "version": "[0.1.0, )"
+            },
+            "Confluent.Kafka": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
+            "Confluent.SchemaRegistry": {
+              "target": "Package",
+              "version": "[2.3.0, )"
             },
             "Dapper": {
               "target": "Package",
@@ -271,6 +287,14 @@
             "BCrypt.Net": {
               "target": "Package",
               "version": "[0.1.0, )"
+            },
+            "Confluent.Kafka": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
+            "Confluent.SchemaRegistry": {
+              "target": "Package",
+              "version": "[2.3.0, )"
             },
             "Dapper": {
               "target": "Package",
