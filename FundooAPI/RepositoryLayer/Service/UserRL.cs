@@ -41,7 +41,7 @@ public class UserRL : IUserRL
         parameters.Add("email", userRegistrationDto.Email, DbType.String);
         parameters.Add("password", hashedPassword, DbType.String);
 
-        var query = @"INSERT INTO Users (FirstName, LastName, Email, Password)
+        var insertQuery = @"INSERT INTO Users (FirstName, LastName, Email, Password)
                       VALUES (@fName, @lName, @email, @password);
                       SELECT CAST(SCOPE_IDENTITY() as int);";
 
@@ -68,9 +68,9 @@ public class UserRL : IUserRL
             if (userExists > 0)
                 throw new UserExistsException("User already exists");
 
-            bool result = await connection.QuerySingleAsync<bool>(query, parameters);
+            bool insertQueryResult = await connection.QuerySingleAsync<bool>(insertQuery, parameters);
 
-            if (!result)
+            if (!insertQueryResult)
                 throw new Exception("Error occurred while inserting data in db");
 
 
@@ -87,19 +87,18 @@ public class UserRL : IUserRL
             //send kafka produce success message on console terminal
             Console.WriteLine($"Sent user registration event: {userEventData.FirstName} {userEventData.LastName}, {userEventData.Email}");
 
+
             _consumer.Subscribe("user-registration-topic");
 
-            // Handle incoming messages
-            var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
 
+            // Handle incoming messages            
             _ = Task.Run(async () =>
             {
-                while (!cancellationToken.IsCancellationRequested)
+                while (true)
                 {
                     try
                     {
-                        var message = _consumer.Consume(cancellationToken);
+                        var message = _consumer.Consume();
 
                         // Extract user registration data from Kafka message
                         var userEventData = JsonConvert.DeserializeObject<UserRegistrationDto>(message.Value);
@@ -134,7 +133,7 @@ public class UserRL : IUserRL
                 }
             });
 
-            return result;
+            return insertQueryResult;
         }
 
     }

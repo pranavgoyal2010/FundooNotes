@@ -1,8 +1,10 @@
 ﻿using Dapper;
 using ModelLayer.Dto;
+using Newtonsoft.Json;
 using RepositoryLayer.Context;
 using RepositoryLayer.CustomException;
 using RepositoryLayer.Interface;
+using StackExchange.Redis;
 using System.Data;
 
 namespace RepositoryLayer.Service;
@@ -10,10 +12,12 @@ namespace RepositoryLayer.Service;
 public class NoteRL : INoteRL
 {
     private readonly AppDbContext _appDbContext;
+    private readonly IDatabase _cache;
 
-    public NoteRL(AppDbContext appDbContext)
+    public NoteRL(AppDbContext appDbContext, IConnectionMultiplexer redis)
     {
         _appDbContext = appDbContext;
+        _cache = redis.GetDatabase();
     }
 
     public async Task<GetNoteDto> CreateNote(CreateNoteDto createNoteDto, int userId)
@@ -56,8 +60,17 @@ public class NoteRL : INoteRL
             }
 
 
-            return await connection.QuerySingleAsync<GetNoteDto>(insertQuery, parameters);
+            GetNoteDto newNote = await connection.QuerySingleAsync<GetNoteDto>(insertQuery, parameters);
 
+            if (newNote == null)
+                throw new Exception("Error occured while inserting new note");
+
+            var cacheKey = $"UserNotes:{userId}";
+
+            await _cache.HashSetAsync(cacheKey, $"Note:{newNote.NoteId}", Serialize(newNote));
+            await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
+
+            return newNote;
         }
 
     }
@@ -78,6 +91,15 @@ public class NoteRL : INoteRL
         {
 
             var allNotes = await connection.QueryAsync<GetNoteDto>(selectQuery, new { userId });
+
+            var cacheKey = $"UserNotes:{userId}";
+
+            // Cache the retrieved notes
+            foreach (var note in allNotes)
+            {
+                await _cache.HashSetAsync(cacheKey, $"Note:{note.NoteId}", Serialize(note));
+            }
+            await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
 
             //return allNotes.Reverse().ToList();
             return allNotes.ToList();
@@ -100,12 +122,17 @@ public class NoteRL : INoteRL
 
             var note = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
 
-            if (note != null)
-            {
-                return note;
-            }
-            else
+            if (note == null)
                 throw new NoteDoesNotExistException("Note does not exist due to wrong noteId");
+
+            var cacheKey = $"UserNotes:{userId}";
+            var noteField = $"Note:{noteId}";
+
+            await _cache.HashSetAsync(cacheKey, noteField, Serialize(note));
+            await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
+
+            return note;
+
         }
     }
 
@@ -155,6 +182,20 @@ public class NoteRL : INoteRL
 
             //Fetch the updated note
             var updatedNote = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
+
+            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache            
+            var noteField = $"Note:{noteId}"; // Field for the specific note
+
+            // Get all user cache keys
+            var cacheKeys = (await GetAllCacheKeysAsync()).Where(k => k.StartsWith(cacheKeyPrefix));
+
+            // Update the note in each user's cache
+            foreach (var cacheKey in cacheKeys)
+            {
+                await _cache.HashSetAsync(cacheKey, noteField, Serialize(updatedNote));
+                await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
+            }
+
             return updatedNote;
 
         }
@@ -188,8 +229,22 @@ public class NoteRL : INoteRL
 
 
             // Fetch the updated note            
-            var selectQueryResult = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
-            return selectQueryResult;
+            var updatedNote = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
+
+            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
+            var noteField = $"Note:{noteId}"; // Field for the specific note
+
+            // Get all user cache keys containing the note
+            var cacheKeys = (await GetAllCacheKeysAsync()).Where(k => k.StartsWith(cacheKeyPrefix));
+
+            // Update the note in each user's cache
+            foreach (var cacheKey in cacheKeys)
+            {
+                await _cache.HashSetAsync(cacheKey, noteField, Serialize(updatedNote));
+                await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
+            }
+
+            return updatedNote;
 
         }
 
@@ -234,8 +289,22 @@ public class NoteRL : INoteRL
 
 
             // Fetch the updated note
-            var selectQueryResult = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
-            return selectQueryResult;
+            var updatedNote = await connection.QuerySingleOrDefaultAsync<GetNoteDto>(selectQuery, new { userId, noteId });
+
+            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
+            var noteField = $"Note:{noteId}"; // Field for the specific note
+
+            // Get all user cache keys containing the note
+            var cacheKeys = (await GetAllCacheKeysAsync()).Where(k => k.StartsWith(cacheKeyPrefix));
+
+            // Update the note in each user's cache
+            foreach (var cacheKey in cacheKeys)
+            {
+                await _cache.HashSetAsync(cacheKey, noteField, Serialize(updatedNote));
+                await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
+            }
+
+            return updatedNote;
 
         }
 
@@ -258,8 +327,35 @@ public class NoteRL : INoteRL
             if (result == 0)
                 throw new DeleteFailException("Delete failed please try again due to wrong NoteId");
 
+            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
+            var noteField = $"Note:{noteId}"; // Field for the specific note
+
+            // Get all user cache keys containing the note
+            var cacheKeys = (await GetAllCacheKeysAsync()).Where(k => k.StartsWith(cacheKeyPrefix));
+
+            // Update the note in each user's cache
+            foreach (var cacheKey in cacheKeys)
+            {
+                await _cache.HashDeleteAsync(cacheKey, noteField);
+            }
+
             return true;
         }
+    }
+
+    private string Serialize(object value)
+    {
+        return JsonConvert.SerializeObject(value);
+    }
+
+    // Helper method to get all cache keys
+    private async Task<IEnumerable<string>> GetAllCacheKeysAsync()
+    {
+        var endpoints = _cache.Multiplexer.GetEndPoints();
+        var server = _cache.Multiplexer.GetServer(endpoints.First());
+        var keys = server.Keys();
+
+        return keys.Select(key => (string)key);
     }
 
 }

@@ -35,12 +35,12 @@ public class NoteController : ControllerBase
             var userIdClaimed = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int userId = Convert.ToInt32(userIdClaimed);
 
-            var cacheKey = $"UserNotes:{userId}";
+            //var cacheKey = $"UserNotes:{userId}";
 
             var newNote = await _noteBL.CreateNote(createNoteDto, userId);
 
-            await _cache.HashSetAsync(cacheKey, $"Note:{newNote.NoteId}", Serialize(newNote));
-            await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
+            //await _cache.HashSetAsync(cacheKey, $"Note:{newNote.NoteId}", Serialize(newNote));
+            //await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
 
             var response = new FundooResponseModel<GetNoteDto>
             {
@@ -90,11 +90,11 @@ public class NoteController : ControllerBase
             var allNotes = await _noteBL.GetAllNotes(userId);
 
             // Cache the retrieved notes
-            foreach (var note in allNotes)
+            /*foreach (var note in allNotes)
             {
                 await _cache.HashSetAsync(cacheKey, $"Note:{note.NoteId}", Serialize(note));
             }
-            await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
+            await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes*/
 
 
             var response = new FundooResponseModel<IEnumerable<GetNoteDto>>
@@ -146,8 +146,8 @@ public class NoteController : ControllerBase
 
 
             // Cache the note
-            await _cache.HashSetAsync(cacheKey, noteField, Serialize(note));
-            await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
+            //await _cache.HashSetAsync(cacheKey, noteField, Serialize(note));
+            //await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
 
             var response = new FundooResponseModel<GetNoteDto>
             {
@@ -189,7 +189,7 @@ public class NoteController : ControllerBase
             var updatedNote = await _noteBL.UpdateNote(updateNoteDto, userId, noteId);
 
 
-            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache            
+            /*var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache            
             var noteField = $"Note:{noteId}"; // Field for the specific note
 
             // Get all user cache keys
@@ -200,7 +200,7 @@ public class NoteController : ControllerBase
             {
                 await _cache.HashSetAsync(cacheKey, noteField, Serialize(updatedNote));
                 await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
-            }
+            }*/
 
             var response = new FundooResponseModel<GetNoteDto>
             {
@@ -242,7 +242,7 @@ public class NoteController : ControllerBase
             // Perform the update operation in the database
             var updatedNote = await _noteBL.TrashNote(userId, noteId);
 
-            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
+            /*var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
             var noteField = $"Note:{noteId}"; // Field for the specific note
 
             // Get all user cache keys containing the note
@@ -253,7 +253,7 @@ public class NoteController : ControllerBase
             {
                 await _cache.HashSetAsync(cacheKey, noteField, Serialize(updatedNote));
                 await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
-            }
+            }*/
 
             var response = new FundooResponseModel<string>
             {
@@ -293,7 +293,7 @@ public class NoteController : ControllerBase
             // Perform the update operation in the database
             var updatedNote = await _noteBL.ArchiveNote(userId, noteId);
 
-            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
+            /*var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
             var noteField = $"Note:{noteId}"; // Field for the specific note
 
             // Get all user cache keys containing the note
@@ -304,7 +304,7 @@ public class NoteController : ControllerBase
             {
                 await _cache.HashSetAsync(cacheKey, noteField, Serialize(updatedNote));
                 await _cache.KeyExpireAsync(cacheKey, TimeSpan.FromMinutes(10)); // Cache for 10 minutes
-            }
+            }*/
 
             var response = new FundooResponseModel<string>
             {
@@ -353,7 +353,7 @@ public class NoteController : ControllerBase
             // Perform the delete operation in the database
             await _noteBL.DeleteNote(userId, noteId);
 
-            var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
+            /*var cacheKeyPrefix = $"UserNotes:"; // prefix key for every user's cache
             var noteField = $"Note:{noteId}"; // Field for the specific note
 
             // Get all user cache keys containing the note
@@ -363,7 +363,7 @@ public class NoteController : ControllerBase
             foreach (var cacheKey in cacheKeys)
             {
                 await _cache.HashDeleteAsync(cacheKey, noteField);
-            }
+            }*/
 
             var response = new FundooResponseModel<string>
             {
@@ -398,7 +398,7 @@ public class NoteController : ControllerBase
         return JsonConvert.DeserializeObject<T>(value);
     }
 
-    private string Serialize(object value)
+    /*private string Serialize(object value)
     {
         return JsonConvert.SerializeObject(value);
     }
@@ -411,6 +411,6 @@ public class NoteController : ControllerBase
         var keys = server.Keys();
 
         return keys.Select(key => (string)key);
-    }
+    }*/
 
 }
